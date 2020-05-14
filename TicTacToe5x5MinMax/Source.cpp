@@ -17,7 +17,13 @@ Welcome to the TicTacToe game where you will be competing against AI
 5. The board`s size is 5x5.
 To start the game press 'enter'.  
 )";
-                                                                                            
+                
+enum class player : short
+{
+	AI = -1,
+	None = 0,
+	Human = 1
+};
 void setField(wchar_t* screen)
 {
 	//Set screen to be blank
@@ -47,9 +53,9 @@ int main()
 {
 	std::string sConsoleProps = "MODE CON COLS=" + std::to_string(nScreenWidth) + " LINES=" + std::to_string(nScreenHeight);
 	system(sConsoleProps.c_str());
-	//An array of values, 0 = blank space, 1 = X and 2 = O
-	std::array<short, nFieldSide * nFieldSide> field; 
-	field.fill(0);
+
+	std::array<player, nFieldSide * nFieldSide> field; 
+	field.fill(player::None);
 
 	std::cout << rules;
 	std::cin.get();
@@ -68,9 +74,6 @@ int main()
 	COORD coord;
 	DWORD dwBytesWritten = 0;
 	SetConsoleMode(hConsoleIn, ENABLE_EXTENDED_FLAGS|ENABLE_WINDOW_INPUT|ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
-	SMALL_RECT r = { nScreenWidth, nScreenHeight };
-	SetConsoleWindowInfo(hConsoleOut, false, &r);
-	//MoveWindow(GetConsoleWindow(), 100, 100, nScreenWidth * 16, nScreenHeight * 16, false);
 
 	bool game = true;
 	while (game)
@@ -90,7 +93,7 @@ int main()
 				if (coord.X < nBorderSide && coord.Y < nBorderSide && screen[coord.Y * nScreenWidth + coord.X] == ' ')
 				{
 					screen[coord.Y * nScreenWidth + coord.X] = 'X';
-					field[coord.Y / 2 * nFieldSide + coord.X/2] = 1;
+					field[coord.Y / 2 * nFieldSide + coord.X/2] = player::Human;
 				}
 			}
 		}
