@@ -28,6 +28,8 @@ int main()
                 std::cout << "MinMax algorithm isn`t efficient enough \n to play on a field this big" << std::endl;
             else if (stoi(str) <= 0)
                 std::cout << "Input must be greater than 0" << std::endl;
+            else if (stoi(str) == 1 || stoi(str) == 2)
+                std::cout << "Wow you`re a tough guy that likes challenges arent you?\nCome on I`m not gonna let you do that" << std::endl;
             else
             {
                 size = std::stoi(str);
