@@ -34,6 +34,7 @@ private:
 	COORD coord = { 0,0 };
 	DWORD dwBytesWritten = 0;
 	INPUT_RECORD Input;
+	CONSOLE_CURSOR_INFO cursorInfo;
 public:
 	void setScreen(wchar_t* screen);
 	bool hasWon(const std::vector<player> &field);

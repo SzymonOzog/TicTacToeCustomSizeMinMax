@@ -18,16 +18,23 @@ TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
 	HWND consoleWindow = GetConsoleWindow();
 	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
 
+	hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
+
+	SetConsoleMode(hConsoleIn, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
+
+	//disable cursor visibility
+	GetConsoleCursorInfo(hConsoleOut, &cursorInfo);
+	cursorInfo.bVisible = false;
+	SetConsoleCursorInfo(hConsoleOut, &cursorInfo);
+
+	//Set the field to be empty
 	field.reserve(nFieldSide * nFieldSide);
 	for (int i = 0; i < nFieldSide * nFieldSide; i++)
 		field.emplace_back(player::None);
 
 	//Create the game field and set the rest of the screen to be blank
 	setScreen(screen);
-	hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
-
-	SetConsoleMode(hConsoleIn, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
 }
 
 TicTacToe::~TicTacToe()
@@ -61,17 +68,24 @@ void TicTacToe::setScreen(wchar_t* screen)
 
 bool TicTacToe::hasWon(const std::vector<player> &field)
 {
-	int sum;
+	int sum, winningCase;
+	//if there are less taken fields than moves needed to win
+	if (std::count(field.begin(), field.end(), player::None) > field.size() - nFieldSide)
+		return false;
 	for (int i = 0; i < nFieldSide; i++)
 	{
+		sum = 0;
+		winningCase = 0;
 		//check horizontally
-		if (abs(std::accumulate(field.begin() + i * nFieldSide, field.begin() + (i + 1) * nFieldSide, 0, 
-				[](auto result, auto x) {return result + static_cast<int>(x);})) == nFieldSide)
+		while (abs(sum) == winningCase && winningCase < nFieldSide)
+			sum += static_cast<int>(field[winningCase++ + i*nFieldSide]);
+		if (abs(sum) == nFieldSide)
 			return true;
 		//check veritically 
 		sum = 0;
-		for (int j = 0; j < nFieldSide * nFieldSide; j += nFieldSide)
-			sum += static_cast<int>(field[i + j]);
+		winningCase = 0;
+		while (abs(sum) == winningCase && winningCase < nFieldSide)
+			sum += static_cast<int>(field[nFieldSide*winningCase++ + i]);
 		if (abs(sum) == nFieldSide)
 			return true;
 	}
@@ -157,6 +171,7 @@ void TicTacToe::start()
 		//output our screen to the console
 		WriteConsoleOutputCharacter(hConsoleOut, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten);
 	}
+	SetConsoleCursorPosition(hConsoleOut, { 0, static_cast<short>(nBorderSide + 1) });
 	std::cout << finalMessage << std::endl;
 }
 
