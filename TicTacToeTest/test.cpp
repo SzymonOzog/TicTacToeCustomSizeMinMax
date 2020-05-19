@@ -1,5 +1,5 @@
-#include "../TicTacToeMinMax/TicTacToe.h"
 #include "gtest/gtest.h"
+#include "../TicTacToeMinMax/TicTacToe.h"
 const int fieldSide = 5;
 int TicTacToe::nFieldSide;
 TicTacToe t(fieldSide);

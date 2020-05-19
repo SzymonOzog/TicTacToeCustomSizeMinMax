@@ -30,9 +30,9 @@ project "TicTacToeTest"
 	objdir("obj/" .. outputdir .. "/%{prj.name}")
 
 	includedirs {"TicTacToeMinMax"}
-	nuget{"Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1"}
+	nuget{"Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.3"}
 	
-	files{"%{prj.name}/**.h", "%{prj.name}/**.cpp"}
+	files{"%{prj.name}/**.h", "%{prj.name}/**.cpp", "TicTacToeMinMax/TicTacToe.h", "TicTacToeMinMax/TicTacToe.cpp"}
 	
 	cppdialect "C++17"
 	systemversion "latest"
