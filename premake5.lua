@@ -5,7 +5,7 @@ workspace "TicTacToeCustomSize"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 project "TicTacToeMinMax"
-	location "MathLib"
+	location "TicTacToeMinMax"
 	kind "ConsoleApp"
 	language "C++"
 	
@@ -22,7 +22,7 @@ project "TicTacToeMinMax"
 		optimize "On"
 		
 project "TicTacToeTest"
-	location "MathLibTest"
+	location "TicTacToeTest"
 	kind "ConsoleApp"
 	language "C++"
 	
