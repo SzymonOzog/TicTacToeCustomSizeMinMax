@@ -1,5 +1,8 @@
 #pragma once
+#define NOMINMAX //no windows.h I don`t want to use your terrible min and max macros
+#include <Windows.h>
 #include <string>
+#include <vector>
 enum class player : short
 {
 	AI = -1,
@@ -9,25 +12,39 @@ enum class player : short
 class TicTacToe
 {
 public: 
-	TicTacToe() = default;
-	~TicTacToe() = default;
+	TicTacToe() = delete;
+	TicTacToe(int fieldSide);
+	~TicTacToe();
 	
 private:
 	static const int nScreenWidth = 80;
 	static const int nScreenHeight = 30;
-	static const int nFieldSide = 5;
-	static const int nBorderSide = 2 * nFieldSide + 1;
-	const std::string rules = R"(
-Welcome to the TicTacToe game where you will be competing against AI
-1. You play as X
-2. You have the first move
-3. The AI plays as O
-4. To place X just click on the field
-5. The board`s size is 5x5.
-To start the game press 'enter'.  
-)";
+
+	static int nFieldSide;
+	const int nBorderSide;
+	bool game = true;
+	std::string finalMessage;
+	std::vector<player> field;
+	//Screen buffer - we will be outputting this to the screen
+	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
+
+	HANDLE hConsoleOut = nullptr;
+	HANDLE hConsoleIn = nullptr;
+	DWORD Events = 0;
+	COORD coord = { 0,0 };
+	DWORD dwBytesWritten = 0;
+	INPUT_RECORD Input;
 public:
-	void setField(wchar_t* screen);
+	void setScreen(wchar_t* screen);
+	bool hasWon(const std::vector<player> &field);
+	std::pair<int, int> findBestMove(std::vector<player> &field, int movesTaken = 0, std::pair<int, int> shortestWin = { nFieldSide, -1 });
 	void start();
+	void gameOver(player p);
+private:
+	inline bool isViableCoord(COORD coord) { return (coord.X < nBorderSide && coord.Y < nBorderSide && screen[coord.Y * nScreenWidth + coord.X] == ' '); }
+	inline int coordToScreen(COORD c) { return c.Y * nScreenWidth + c.X; }
+	inline int coordToField(COORD c) { return c.Y / 2 * nFieldSide + c.X / 2; }
+	inline COORD fieldToCoord(int p) { short x = p % nFieldSide; short y = p / nFieldSide; return { x * 2 + 1, y * 2 + 1 }; }
+	inline int fieldToScreen(int p) { return coordToScreen(fieldToCoord(p)); }
 };
 

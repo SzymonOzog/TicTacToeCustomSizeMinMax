@@ -1,0 +1,8 @@
+﻿  Source.cpp
+  TicTacToe.cpp
+E:\programowanie\C++\TicTacToe5x5MinMax\TicTacToe5x5MinMax\TicTacToe.cpp(102,20): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 200 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  TicTacToe5x5MinMax.vcxproj -> E:\programowanie\c++\TicTacToe5x5MinMax\Release\TicTacToe5x5MinMax.exe

@@ -1,14 +1,41 @@
-#define NOMINMAX //no windows.h I don`t want to use your terrible min and max macros
-#include <Windows.h>
+
 #include <algorithm>
 #include <iostream>
-#include <array>
 #include <cstdlib>
 #include <numeric>
 #include <utility>
 #include "TicTacToe.h"
 
-void TicTacToe::setField(wchar_t* screen)
+TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
+{
+	nFieldSide = fieldSide;
+	
+	//set the size of our window
+	std::string sConsoleProps = "MODE CON COLS=" + std::to_string(nScreenWidth) + " LINES=" + std::to_string(nScreenHeight);
+	system(sConsoleProps.c_str());
+
+	//disable the ability to resize the window
+	HWND consoleWindow = GetConsoleWindow();
+	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
+
+	field.reserve(nFieldSide * nFieldSide);
+	for (int i = 0; i < nFieldSide * nFieldSide; i++)
+		field.emplace_back(player::None);
+
+	//Create the game field and set the rest of the screen to be blank
+	setScreen(screen);
+	hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
+
+	SetConsoleMode(hConsoleIn, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
+}
+
+TicTacToe::~TicTacToe()
+{
+	delete(screen);
+}
+
+void TicTacToe::setScreen(wchar_t* screen)
 {
 	//Set screen to be blank
 	for (int i = 0; i < nScreenHeight * nScreenWidth; i++)
@@ -32,34 +59,60 @@ void TicTacToe::setField(wchar_t* screen)
 	}
 }
 
+bool TicTacToe::hasWon(const std::vector<player> &field)
+{
+	int sum;
+	for (int i = 0; i < nFieldSide; i++)
+	{
+		//check horizontally
+		if (abs(std::accumulate(field.begin() + i * nFieldSide, field.begin() + (i + 1) * nFieldSide, 0, 
+				[](auto result, auto x) {return result + static_cast<int>(x);})) == nFieldSide)
+			return true;
+		//check veritically 
+		sum = 0;
+		for (int j = 0; j < nFieldSide * nFieldSide; j += nFieldSide)
+			sum += static_cast<int>(field[i + j]);
+		if (abs(sum) == nFieldSide)
+			return true;
+	}
+	//check first diagonal
+	sum = 0;
+	for (int x = 0, y=0; y < nFieldSide && x< nFieldSide; x++, y++)
+		sum += static_cast<int>(field[y*nFieldSide+x]);
+	if (abs(sum) == nFieldSide)
+		return true;
+	//check second diagonal
+	sum = 0;
+	for (int x = nFieldSide - 1, y = 0; y < nFieldSide && x >=0; x--, y++)
+		sum += static_cast<int>(field[y * nFieldSide + x]);
+	if (abs(sum) == nFieldSide)
+		return true;
+	return false;
+}
 
+std::pair<int, int> TicTacToe::findBestMove(std::vector<player> &field, int movesTaken, std::pair<int, int> shortestWin)
+{
+	if (movesTaken >= shortestWin.first)
+		return shortestWin;
+	else if (hasWon(field))
+		return { movesTaken, -1 };
+	for (int i = 0; i < field.size(); i++)
+	{
+		//check for AI and player Win, if the player can win faster - block him
+		if (field[i] == player::None)
+		{
+			field[i] = player::AI;
+			shortestWin = std::min(shortestWin, { findBestMove(field, movesTaken + 1, shortestWin).first, i });
+			field[i] = player::Human;
+			shortestWin = std::min(shortestWin, { findBestMove(field, movesTaken + 1, shortestWin).first, i });
+			field[i] = player::None;
+		}
+	}
+	return shortestWin;
+}
 void TicTacToe::start()
 {
-	std::string sConsoleProps = "MODE CON COLS=" + std::to_string(nScreenWidth) + " LINES=" + std::to_string(nScreenHeight);
-	system(sConsoleProps.c_str());
 
-	std::array<player, nFieldSide* nFieldSide> field;
-	field.fill(player::None);
-
-	std::cout << rules;
-	std::cin.get();
-
-	//Screen buffer - we will be outputting this to the screen
-	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
-
-	//Create the game field and set the rest of the screen to be blank
-	setField(screen);
-
-	//Get the console handle
-	HANDLE hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	HANDLE hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
-	INPUT_RECORD Input;
-	DWORD Events;
-	COORD coord;
-	DWORD dwBytesWritten = 0;
-	SetConsoleMode(hConsoleIn, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
-
-	bool game = true;
 	while (game)
 	{
 		ReadConsoleInput(hConsoleIn, &Input, 1, &Events);
@@ -72,12 +125,30 @@ void TicTacToe::start()
 		{
 			if (Input.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
 			{
-				coord.X = Input.Event.MouseEvent.dwMousePosition.X;
-				coord.Y = Input.Event.MouseEvent.dwMousePosition.Y;
-				if (coord.X < nBorderSide && coord.Y < nBorderSide && screen[coord.Y * nScreenWidth + coord.X] == ' ')
+				coord = Input.Event.MouseEvent.dwMousePosition;
+				if (isViableCoord(coord))
 				{
-					screen[coord.Y * nScreenWidth + coord.X] = 'X';
-					field[coord.Y / 2 * nFieldSide + coord.X / 2] = player::Human;
+					screen[coordToScreen(coord)] = 'X';
+					field[coordToField(coord)] = player::Human;
+					//if somebody won at this point - it was the player
+					if (hasWon(field))
+					{
+						gameOver(player::Human);
+						break;
+					}
+					int aiMove = findBestMove(field).second;
+					if (aiMove == -1)
+					{
+						gameOver(player::None);
+						break;
+					}
+					screen[fieldToScreen(aiMove)] = 'O';
+					field[aiMove] = player::AI;
+					if (hasWon(field))
+					{
+						gameOver(player::AI);
+						break;
+					}
 				}
 			}
 		}
@@ -85,5 +156,23 @@ void TicTacToe::start()
 		screen[nScreenWidth * nScreenHeight - 1] = '\0';
 		//output our screen to the console
 		WriteConsoleOutputCharacter(hConsoleOut, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten);
+	}
+	std::cout << finalMessage << std::endl;
+}
+
+void TicTacToe::gameOver(player p)
+{
+	game = false;
+	switch (p)
+	{
+	case player::None:
+		finalMessage = "TIE! Congratulations, you couldn`t win anyway";
+		break;
+	case player::AI:
+		finalMessage = "YOU LOST!";
+		break;
+	case player::Human:
+		finalMessage = "WOW, YOU WON! Guess my program is bad, post an issue on my GitHub or contact me";
+		break;
 	}
 }

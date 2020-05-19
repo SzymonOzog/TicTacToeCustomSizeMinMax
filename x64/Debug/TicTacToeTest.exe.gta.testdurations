@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GtaTestDurations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Executable>E:\programowanie\c++\TicTacToe5x5MinMax\x64\Debug\TicTacToeTest.exe</Executable>
+  <TestDurations>
+    <TestDuration Test="TicTacToeTests.HasWonTest" Duration="2" />
+    <TestDuration Test="AITests.EmptyFieldTimeElapse" Duration="43159" />
+    <TestDuration Test="AITests.WillWin" Duration="1" />
+    <TestDuration Test="AITests.WillBlockPlayerWin" Duration="1" />
+    <TestDuration Test="AITest.ArrayTest" Duration="28851" />
+  </TestDurations>
+</GtaTestDurations>
