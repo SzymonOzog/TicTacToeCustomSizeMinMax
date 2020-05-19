@@ -1,1 +1,0 @@
-E:\programowanie\C++\TicTacToe5x5MinMax\TicTacToeTest\Release\TicTacToeTest.vcxproj.CopyComplete
