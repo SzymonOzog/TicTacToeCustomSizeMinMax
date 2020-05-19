@@ -1,1 +1,2 @@
 E:\programowanie\C++\TicTacToe5x5MinMax\TicTacToeTest\x64\Debug\TicTacToeTest.vcxproj.CopyComplete
+E:\Programowanie\C++\TicTacToeCustomSizeMinMax\TicTacToeTest\x64\Debug\TicTacToeTest.vcxproj.CopyComplete

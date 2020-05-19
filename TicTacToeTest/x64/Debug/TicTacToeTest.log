@@ -1,1 +1,5 @@
-﻿
+﻿  TicTacToe.cpp
+E:\Programowanie\C++\TicTacToeCustomSizeMinMax\TicTacToeMinMax\TicTacToe.cpp(73,59): warning C4018: '>': signed/unsigned mismatch
+  test.cpp
+  Generating Code...
+  TicTacToeTest.vcxproj -> E:\Programowanie\C++\TicTacToeCustomSizeMinMax\x64\Debug\TicTacToeTest.exe
