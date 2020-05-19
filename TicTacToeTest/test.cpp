@@ -1,4 +1,4 @@
-#include "../TicTacToe5x5MinMax/TicTacToe.h"
+#include "../TicTacToeMinMax/TicTacToe.h"
 #include "gtest/gtest.h"
 const int fieldSide = 5;
 int TicTacToe::nFieldSide;

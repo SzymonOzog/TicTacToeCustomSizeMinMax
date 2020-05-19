@@ -33,19 +33,14 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClInclude Include="..\TicTacToe5x5MinMax\TicTacToe.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\TicTacToe5x5MinMax\TicTacToe.cpp" />
+    <ClCompile Include="..\TicTacToeMinMax\TicTacToe.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TicTacToe5x5MinMax\TicTacToe5x5MinMax.vcxproj">
-      <Project>{b1372a04-97be-4a7c-95a1-4154c6cced60}</Project>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="..\TicTacToeMinMax\TicTacToe.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

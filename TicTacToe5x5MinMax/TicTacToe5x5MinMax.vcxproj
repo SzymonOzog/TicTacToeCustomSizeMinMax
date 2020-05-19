@@ -23,6 +23,7 @@
     <ProjectGuid>{B1372A04-97BE-4A7C-95A1-4154C6CCED60}</ProjectGuid>
     <RootNamespace>TicTacToe5x5MinMax</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>TicTacToeMinMax</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
