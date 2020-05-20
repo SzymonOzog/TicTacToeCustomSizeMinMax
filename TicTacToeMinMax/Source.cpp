@@ -10,6 +10,7 @@ Welcome to the TicTacToe game where you will be competing against AI
 3. You have the first move
 4. To place X just click on the field
 5. You choose the board size.
+6. To leave press 'Esc'
 To start the game type in the board size and press 'enter'.  
 )";
 int main()
