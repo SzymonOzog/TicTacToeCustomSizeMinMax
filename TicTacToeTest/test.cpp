@@ -27,7 +27,8 @@ TEST(TicTacToeTests, HasWonTest)
             f[2 + i * fieldSide] = p;
             f[3 + i * fieldSide] = p;
             f[4 + i * fieldSide] = p;
-            EXPECT_EQ(t.hasWon(f), true);
+            t.field = f;
+            EXPECT_EQ(t.hasWon(), true);
             //check veritically
             nullifyVector(f);
             f[0 + i] = p;
@@ -35,7 +36,8 @@ TEST(TicTacToeTests, HasWonTest)
             f[10 + i] = p;
             f[15 + i] = p;
             f[20 + i] = p;
-            EXPECT_EQ(t.hasWon(f), true);
+            t.field = f;
+            EXPECT_EQ(t.hasWon(), true);
         }
         //check diagonally
         nullifyVector(f);
@@ -44,7 +46,8 @@ TEST(TicTacToeTests, HasWonTest)
         f[12] = p;
         f[18] = p;
         f[24] = p;
-        EXPECT_EQ(t.hasWon(f), true);
+        t.field = f;
+        EXPECT_EQ(t.hasWon(), true);
         //check second diagonal
         nullifyVector(f);
         f[4] = p;
@@ -52,7 +55,8 @@ TEST(TicTacToeTests, HasWonTest)
         f[12] = p;
         f[16] = p;
         f[20] = p;
-        EXPECT_EQ(t.hasWon(f), true);
+        t.field = f;
+        EXPECT_EQ(t.hasWon(), true);
     }
 }
 
@@ -61,7 +65,8 @@ TEST(TicTacToeTests, HasWonTest)
 TEST(AITests, EmptyFieldTimeElapse)
 {
     nullifyVector(f);
-    std::pair<int, int> choice = t.findBestMove(f);
+    t.field = f;
+    std::pair<int, int> choice = t.findBestMove();
 }
 TEST(AITests, WillWin)
 {
@@ -70,7 +75,8 @@ TEST(AITests, WillWin)
     f[6] = player::AI;
     f[7] = player::AI;
     f[8] = player::AI;
-    std::pair<int, int> choice = t.findBestMove(f);
+    t.field = f;
+    std::pair<int, int> choice = t.findBestMove();
     EXPECT_EQ(choice.second, 9);
 }
 TEST(AITests, WillBlockPlayerWin)
@@ -83,6 +89,7 @@ TEST(AITests, WillBlockPlayerWin)
     f[6] = player::Human;
     f[7] = player::Human;
     f[8] = player::Human;
-    std::pair<int, int> choice = t.findBestMove(f);
+    t.field = f;
+    std::pair<int, int> choice = t.findBestMove();
     EXPECT_EQ(choice.second, 9);
 }

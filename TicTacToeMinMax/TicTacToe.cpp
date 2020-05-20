@@ -34,7 +34,7 @@ TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
 		field.emplace_back(player::None);
 
 	//Create the game field and set the rest of the screen to be blank
-	setScreen(screen);
+	setScreen();
 }
 
 TicTacToe::~TicTacToe()
@@ -42,7 +42,7 @@ TicTacToe::~TicTacToe()
 	delete(screen);
 }
 
-void TicTacToe::setScreen(wchar_t* screen)
+void TicTacToe::setScreen()
 {
 	//Set screen to be blank
 	for (int i = 0; i < nScreenHeight * nScreenWidth; i++)
@@ -66,7 +66,7 @@ void TicTacToe::setScreen(wchar_t* screen)
 	}
 }
 
-bool TicTacToe::hasWon(const std::vector<player> &field)
+bool TicTacToe::hasWon()
 {
 	int sum, winningCase;
 	//if there are less taken fields than moves needed to win
@@ -104,11 +104,11 @@ bool TicTacToe::hasWon(const std::vector<player> &field)
 	return false;
 }
 
-std::pair<int, int> TicTacToe::findBestMove(std::vector<player> &field, int movesTaken, std::pair<int, int> shortestWin)
+std::pair<int, int> TicTacToe::findBestMove(int movesTaken, std::pair<int, int> shortestWin)
 {
 	if (movesTaken >= shortestWin.first)
 		return shortestWin;
-	else if (hasWon(field))
+	else if (hasWon())
 		return { movesTaken, -1 };
 	for (int i = 0; i < field.size(); i++)
 	{
@@ -116,9 +116,9 @@ std::pair<int, int> TicTacToe::findBestMove(std::vector<player> &field, int move
 		if (field[i] == player::None)
 		{
 			field[i] = player::AI;
-			shortestWin = std::min(shortestWin, { findBestMove(field, movesTaken + 1, shortestWin).first, i });
+			shortestWin = std::min(shortestWin, { findBestMove(movesTaken + 1, shortestWin).first, i });
 			field[i] = player::Human;
-			shortestWin = std::min(shortestWin, { findBestMove(field, movesTaken + 1, shortestWin).first, i });
+			shortestWin = std::min(shortestWin, { findBestMove(movesTaken + 1, shortestWin).first, i });
 			field[i] = player::None;
 		}
 	}
@@ -145,12 +145,12 @@ void TicTacToe::start()
 					screen[coordToScreen(coord)] = 'X';
 					field[coordToField(coord)] = player::Human;
 					//if somebody won at this point - it was the player
-					if (hasWon(field))
+					if (hasWon())
 					{
 						gameOver(player::Human);
 						break;
 					}
-					int aiMove = findBestMove(field).second;
+					int aiMove = findBestMove().second;
 					if (aiMove == -1)
 					{
 						gameOver(player::None);
@@ -158,7 +158,7 @@ void TicTacToe::start()
 					}
 					screen[fieldToScreen(aiMove)] = 'O';
 					field[aiMove] = player::AI;
-					if (hasWon(field))
+					if (hasWon())
 					{
 						gameOver(player::AI);
 						break;

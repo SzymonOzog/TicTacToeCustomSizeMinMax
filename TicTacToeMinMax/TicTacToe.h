@@ -24,7 +24,6 @@ private:
 	const int nBorderSide;
 	bool game = true;
 	std::string finalMessage;
-	std::vector<player> field;
 	//Screen buffer - we will be outputting this to the screen
 	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
 
@@ -36,10 +35,12 @@ private:
 	INPUT_RECORD Input;
 	CONSOLE_CURSOR_INFO cursorInfo;
 public:
-	void setScreen(wchar_t* screen);
-	bool hasWon(const std::vector<player> &field);
-	std::pair<int, int> findBestMove(std::vector<player> &field, int movesTaken = 0, std::pair<int, int> shortestWin = { nFieldSide, -1 });
 	void start();
+	//TODO - all of this should be private but rn I have no idea how to test private functions
+	std::vector<player> field;
+	void setScreen();
+	bool hasWon();
+	std::pair<int, int> findBestMove(int movesTaken = 0, std::pair<int, int> shortestWin = { nFieldSide, -1 });
 	void gameOver(player p);
 private:
 	inline bool isViableCoord(COORD coord) { return (coord.X < nBorderSide && coord.Y < nBorderSide && screen[coord.Y * nScreenWidth + coord.X] == ' '); }
