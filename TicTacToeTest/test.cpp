@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../TicTacToeMinMax/TicTacToe.h"
+#include "TicTacToe.h"
 const int fieldSide = 5;
 int TicTacToe::nFieldSide;
 TicTacToe t(fieldSide);
@@ -27,7 +27,7 @@ TEST(TicTacToeTests, HasWonTest)
             f[2 + i * fieldSide] = p;
             f[3 + i * fieldSide] = p;
             f[4 + i * fieldSide] = p;
-            t.field = f;
+            t.vecField = f;
             EXPECT_EQ(t.hasWon(), true);
             //check veritically
             nullifyVector(f);
@@ -36,7 +36,7 @@ TEST(TicTacToeTests, HasWonTest)
             f[10 + i] = p;
             f[15 + i] = p;
             f[20 + i] = p;
-            t.field = f;
+            t.vecField = f;
             EXPECT_EQ(t.hasWon(), true);
         }
         //check diagonally
@@ -46,7 +46,7 @@ TEST(TicTacToeTests, HasWonTest)
         f[12] = p;
         f[18] = p;
         f[24] = p;
-        t.field = f;
+        t.vecField = f;
         EXPECT_EQ(t.hasWon(), true);
         //check second diagonal
         nullifyVector(f);
@@ -55,7 +55,7 @@ TEST(TicTacToeTests, HasWonTest)
         f[12] = p;
         f[16] = p;
         f[20] = p;
-        t.field = f;
+        t.vecField = f;
         EXPECT_EQ(t.hasWon(), true);
     }
 }
@@ -65,7 +65,7 @@ TEST(TicTacToeTests, HasWonTest)
 TEST(AITests, EmptyFieldTimeElapse)
 {
     nullifyVector(f);
-    t.field = f;
+    t.vecField = f;
     std::pair<int, int> choice = t.findBestMove();
 }
 TEST(AITests, WillWin)
@@ -75,7 +75,7 @@ TEST(AITests, WillWin)
     f[6] = player::AI;
     f[7] = player::AI;
     f[8] = player::AI;
-    t.field = f;
+    t.vecField = f;
     std::pair<int, int> choice = t.findBestMove();
     EXPECT_EQ(choice.second, 9);
 }
@@ -89,7 +89,7 @@ TEST(AITests, WillBlockPlayerWin)
     f[6] = player::Human;
     f[7] = player::Human;
     f[8] = player::Human;
-    t.field = f;
+    t.vecField = f;
     std::pair<int, int> choice = t.findBestMove();
     EXPECT_EQ(choice.second, 9);
 }

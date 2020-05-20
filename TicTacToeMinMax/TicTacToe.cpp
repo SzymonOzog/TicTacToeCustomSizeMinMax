@@ -29,9 +29,9 @@ TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
 	SetConsoleCursorInfo(hConsoleOut, &cursorInfo);
 
 	//Set the field to be empty
-	field.reserve(nFieldSide * nFieldSide);
+	vecField.reserve(nFieldSide * nFieldSide);
 	for (int i = 0; i < nFieldSide * nFieldSide; i++)
-		field.emplace_back(player::None);
+		vecField.emplace_back(player::None);
 
 	//Create the game field and set the rest of the screen to be blank
 	setScreen();
@@ -70,7 +70,7 @@ bool TicTacToe::hasWon()
 {
 	int sum, winningCase;
 	//if there are less taken fields than moves needed to win
-	if (std::count(field.begin(), field.end(), player::None) > field.size() - nFieldSide)
+	if (std::count(vecField.begin(), vecField.end(), player::None) > vecField.size() - nFieldSide)
 		return false;
 	for (int i = 0; i < nFieldSide; i++)
 	{
@@ -78,27 +78,27 @@ bool TicTacToe::hasWon()
 		winningCase = 0;
 		//check horizontally
 		while (abs(sum) == winningCase && winningCase < nFieldSide)
-			sum += static_cast<int>(field[winningCase++ + i*nFieldSide]);
+			sum += static_cast<int>(vecField[winningCase++ + i*nFieldSide]);
 		if (abs(sum) == nFieldSide)
 			return true;
 		//check veritically 
 		sum = 0;
 		winningCase = 0;
 		while (abs(sum) == winningCase && winningCase < nFieldSide)
-			sum += static_cast<int>(field[nFieldSide*winningCase++ + i]);
+			sum += static_cast<int>(vecField[nFieldSide*winningCase++ + i]);
 		if (abs(sum) == nFieldSide)
 			return true;
 	}
 	//check first diagonal
 	sum = 0;
 	for (int x = 0, y=0; y < nFieldSide && x< nFieldSide; x++, y++)
-		sum += static_cast<int>(field[y*nFieldSide+x]);
+		sum += static_cast<int>(vecField[y*nFieldSide+x]);
 	if (abs(sum) == nFieldSide)
 		return true;
 	//check second diagonal
 	sum = 0;
 	for (int x = nFieldSide - 1, y = 0; y < nFieldSide && x >=0; x--, y++)
-		sum += static_cast<int>(field[y * nFieldSide + x]);
+		sum += static_cast<int>(vecField[y * nFieldSide + x]);
 	if (abs(sum) == nFieldSide)
 		return true;
 	return false;
@@ -110,16 +110,16 @@ std::pair<int, int> TicTacToe::findBestMove(int movesTaken, std::pair<int, int> 
 		return shortestWin;
 	else if (hasWon())
 		return { movesTaken, -1 };
-	for (int i = 0; i < field.size(); i++)
+	for (int i = 0; i < vecField.size(); i++)
 	{
 		//check for AI and player Win, if the player can win faster - block him
-		if (field[i] == player::None)
+		if (vecField[i] == player::None)
 		{
-			field[i] = player::AI;
+			vecField[i] = player::AI;
 			shortestWin = std::min(shortestWin, { findBestMove(movesTaken + 1, shortestWin).first, i });
-			field[i] = player::Human;
+			vecField[i] = player::Human;
 			shortestWin = std::min(shortestWin, { findBestMove(movesTaken + 1, shortestWin).first, i });
-			field[i] = player::None;
+			vecField[i] = player::None;
 		}
 	}
 	return shortestWin;
@@ -127,13 +127,13 @@ std::pair<int, int> TicTacToe::findBestMove(int movesTaken, std::pair<int, int> 
 void TicTacToe::start()
 {
 
-	while (game)
+	while (bGame)
 	{
-		ReadConsoleInput(hConsoleIn, &Input, 1, &Events);
+		ReadConsoleInput(hConsoleIn, &Input, 1, &dwEvents);
 		if (Input.EventType == KEY_EVENT)
 		{
 			if (Input.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
-				game = false;
+				bGame = false;
 		}
 		if (Input.EventType == MOUSE_EVENT)
 		{
@@ -143,7 +143,7 @@ void TicTacToe::start()
 				if (isViableCoord(coord))
 				{
 					screen[coordToScreen(coord)] = 'X';
-					field[coordToField(coord)] = player::Human;
+					vecField[coordToField(coord)] = player::Human;
 					//if somebody won at this point - it was the player
 					if (hasWon())
 					{
@@ -157,7 +157,7 @@ void TicTacToe::start()
 						break;
 					}
 					screen[fieldToScreen(aiMove)] = 'O';
-					field[aiMove] = player::AI;
+					vecField[aiMove] = player::AI;
 					if (hasWon())
 					{
 						gameOver(player::AI);
@@ -172,22 +172,22 @@ void TicTacToe::start()
 		WriteConsoleOutputCharacter(hConsoleOut, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten);
 	}
 	SetConsoleCursorPosition(hConsoleOut, { 0, static_cast<short>(nBorderSide + 1) });
-	std::cout << finalMessage << std::endl;
+	std::cout << sFinalMessage << std::endl;
 }
 
 void TicTacToe::gameOver(player p)
 {
-	game = false;
+	bGame = false;
 	switch (p)
 	{
 	case player::None:
-		finalMessage = "TIE! Congratulations, you couldn`t win anyway";
+		sFinalMessage = "TIE! Congratulations, you couldn`t win anyway";
 		break;
 	case player::AI:
-		finalMessage = "YOU LOST!";
+		sFinalMessage = "YOU LOST!";
 		break;
 	case player::Human:
-		finalMessage = "WOW, YOU WON! Guess my program is bad, post an issue on my GitHub or contact me";
+		sFinalMessage = "WOW, YOU WON! Guess my program is bad, post an issue on my GitHub or contact me";
 		break;
 	}
 }

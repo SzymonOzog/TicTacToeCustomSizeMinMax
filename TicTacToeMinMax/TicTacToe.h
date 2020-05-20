@@ -22,14 +22,14 @@ private:
 
 	static int nFieldSide;
 	const int nBorderSide;
-	bool game = true;
-	std::string finalMessage;
+	bool bGame = true;
+	std::string sFinalMessage;
 	//Screen buffer - we will be outputting this to the screen
 	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
 
 	HANDLE hConsoleOut = nullptr;
 	HANDLE hConsoleIn = nullptr;
-	DWORD Events = 0;
+	DWORD dwEvents = 0;
 	COORD coord = { 0,0 };
 	DWORD dwBytesWritten = 0;
 	INPUT_RECORD Input;
@@ -37,7 +37,7 @@ private:
 public:
 	void start();
 	//TODO - all of this should be private but rn I have no idea how to test private functions
-	std::vector<player> field;
+	std::vector<player> vecField;
 	void setScreen();
 	bool hasWon();
 	std::pair<int, int> findBestMove(int movesTaken = 0, std::pair<int, int> shortestWin = { nFieldSide, -1 });
