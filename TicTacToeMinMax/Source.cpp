@@ -15,12 +15,12 @@ To start the game type in the board size and press 'enter'.
 )";
 int main()
 {
-	int size;
-	std::cout << rules;
-   
+    int size;
+    std::cout << rules;
+
     std::string str;
     std::regex regex_int("-?[0-9]");
-    while(true)
+    while (true)
     {
         std::cin >> str;
         if (regex_match(str, regex_int))
@@ -40,7 +40,7 @@ int main()
         else
             std::cout << "Invalid input, try again" << std::endl;
     }
-   
-	TicTacToe game(size);
-	game.start();
+
+    TicTacToe game(size);
+    game.start();
 }
