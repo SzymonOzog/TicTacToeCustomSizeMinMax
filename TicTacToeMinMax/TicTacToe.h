@@ -29,18 +29,14 @@ private:
 
 	HANDLE hConsoleOut = nullptr;
 	HANDLE hConsoleIn = nullptr;
-	DWORD dwEvents = 0;
-	COORD coord = { 0,0 };
-	DWORD dwBytesWritten = 0;
-	INPUT_RECORD Input;
-	CONSOLE_CURSOR_INFO cursorInfo;
+
 public:
 	void start();
 	//TODO - all of this should be private but rn I have no idea how to test private functions
 	std::vector<player> vecField;
-	void setScreen();
-	bool hasWon();
+	void createScreen();
 	std::pair<int, int> findBestMove(int movesTaken = 0, std::pair<int, int> shortestWin = { nFieldSide, -1 });
+	bool hasWon();
 	void gameOver(player p);
 private:
 	inline bool isViableCoord(COORD coord) { return (coord.X < nBorderSide && coord.Y < nBorderSide && screen[coord.Y * nScreenWidth + coord.X] == ' '); }
@@ -48,5 +44,14 @@ private:
 	inline int coordToField(COORD c) { return c.Y / 2 * nFieldSide + c.X / 2; }
 	inline COORD fieldToCoord(int p) { short x = p % nFieldSide; short y = p / nFieldSide; return { x * 2 + 1, y * 2 + 1 }; }
 	inline int fieldToScreen(int p) { return coordToScreen(fieldToCoord(p)); }
+	void createField();
+	void printFinalMessage();
+	void setConsoleProperties();
+	void setWindowSize();
+	void disableWindowResizablility();
+	void disableCursorVisibility();
+	void playGame();
+
+
 };
 
