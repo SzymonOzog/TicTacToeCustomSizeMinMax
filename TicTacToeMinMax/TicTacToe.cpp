@@ -139,7 +139,7 @@ std::pair<int, int> TicTacToe::findBestMove(int reverseDepth, std::pair<int, int
 {
 	if (hasWon())
 		return { reverseDepth * static_cast<int>(currentPlayer), -1 };
-	else if (std::find(vecField.begin(), vecField.end(), player::None) == vecField.end())
+	else if (std::find(vecField.begin(), vecField.end(), player::None) == vecField.end())//FIELD FULL - TIE
 		return { 0, -1 };
 	bestScoreMove.first = (currentPlayer == player::AI ? INT_MIN : INT_MAX);
 	for (int i = 0; i < vecField.size(); i++)
@@ -171,8 +171,8 @@ std::pair<int, int> TicTacToe::findBestMove(int reverseDepth, std::pair<int, int
 bool TicTacToe::hasWon()
 {
 	int sum, winningCase;
-	//if there are less taken fields than moves needed to win
-	if (std::count(vecField.begin(), vecField.end(), player::None) > vecField.size() - nFieldSide)
+	//if there are less taken fields than twice the moves needed to win (AI and human plays alternatley)
+	if (std::count(vecField.begin(), vecField.end(), player::None) > vecField.size() - 2*nFieldSide)
 		return false;
 	for (int i = 0; i < nFieldSide; i++)
 	{
