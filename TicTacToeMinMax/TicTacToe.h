@@ -35,7 +35,7 @@ public:
 	//TODO - all of this should be private but rn I have no idea how to test private functions
 	std::vector<player> vecField;
 	void createScreen();
-	std::pair<int, int> findBestMove(int movesTaken = 0, std::pair<int, int> shortestWin = { nFieldSide, -1 });
+	std::pair<int, int> findBestMove(int reverseDepth = nFieldSide*nFieldSide, std::pair<int, int> bestScoreMove = { 0, -1 }, player currentPlayer = player::AI, int alpha = INT_MIN, int beta = INT_MAX);
 	bool hasWon();
 	void gameOver(player p);
 private:
@@ -44,6 +44,7 @@ private:
 	inline int coordToField(COORD c) { return c.Y / 2 * nFieldSide + c.X / 2; }
 	inline COORD fieldToCoord(int p) { short x = p % nFieldSide; short y = p / nFieldSide; return { x * 2 + 1, y * 2 + 1 }; }
 	inline int fieldToScreen(int p) { return coordToScreen(fieldToCoord(p)); }
+	inline player getOpponent(player p) { return p == player::AI ? player::Human : player::AI;  }
 	void createField();
 	void printFinalMessage();
 	void setConsoleProperties();

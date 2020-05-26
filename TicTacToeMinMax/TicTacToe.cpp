@@ -45,7 +45,7 @@ void TicTacToe::createScreen()
 }
 TicTacToe::~TicTacToe()
 {
-	delete[] screen;
+	//delete[] screen;
 }
 
 void TicTacToe::start()
@@ -135,25 +135,37 @@ void TicTacToe::playGame()
 	}
 }
 
-std::pair<int, int> TicTacToe::findBestMove(int movesTaken, std::pair<int, int> shortestWin)
+std::pair<int, int> TicTacToe::findBestMove(int reverseDepth, std::pair<int, int> bestScoreMove, player currentPlayer, int alpha, int beta)
 {
-	if (movesTaken >= shortestWin.first)
-		return shortestWin;
-	else if (hasWon())
-		return { movesTaken, -1 };
+	if (hasWon())
+		return { reverseDepth * static_cast<int>(currentPlayer), -1 };
+	else if (std::find(vecField.begin(), vecField.end(), player::None) == vecField.end())
+		return { 0, -1 };
+	bestScoreMove.first = (currentPlayer == player::AI ? INT_MIN : INT_MAX);
 	for (int i = 0; i < vecField.size(); i++)
 	{
-		//check for AI and player Win, if the player can win faster - block him
 		if (vecField[i] == player::None)
 		{
-			vecField[i] = player::AI;
-			shortestWin = std::min(shortestWin, { findBestMove(movesTaken + 1, shortestWin).first, i });
-			vecField[i] = player::Human;
-			shortestWin = std::min(shortestWin, { findBestMove(movesTaken + 1, shortestWin).first, i });
+			vecField[i] = currentPlayer;
+			int score = findBestMove(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta).first;
+			if (currentPlayer == player::AI)
+			{
+				alpha = std::max(alpha, score);
+				if (bestScoreMove.first < score)
+					bestScoreMove = { score, i };
+			}
+			else
+			{
+				beta = std::min(beta, score);
+				if (bestScoreMove.first > score)
+					bestScoreMove = { score, i };
+			}
 			vecField[i] = player::None;
+			if (beta <= alpha)
+				break;
 		}
 	}
-	return shortestWin;
+	return bestScoreMove;
 }
 
 bool TicTacToe::hasWon()
