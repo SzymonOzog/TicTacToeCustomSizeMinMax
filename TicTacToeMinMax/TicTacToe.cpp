@@ -206,6 +206,62 @@ bool TicTacToe::hasWon()
 	return false;
 }
 
+bool TicTacToe::isDraw()
+{
+	bool isAI, isHuman;
+	for (int i = 0; i < nFieldSide; i++)
+	{
+		isAI = false;
+		isHuman = false;
+		for (int j = 0; j < nFieldSide; j++)
+		{
+			if (vecField[i * nFieldSide + j] == player::AI)
+				isAI = true;
+			else if (vecField[i * nFieldSide + j] == player::Human)
+				isHuman = true;
+		}
+		if (!(isAI && isHuman))
+			return false;
+
+		isAI = false;
+		isHuman = false;
+		for (int j = 0; j < nFieldSide; j++)
+		{
+			if (vecField[i + nFieldSide * j] == player::AI)
+				isAI = true;
+			else if (vecField[i + nFieldSide * j] == player::Human)
+				isHuman = true;
+		}
+		if (!(isAI && isHuman))
+			return false;
+	}
+	//check first diagonal
+	isAI = false;
+	isHuman = false;
+	for (int x = 0, y = 0; y < nFieldSide && x < nFieldSide; x++, y++)
+	{
+		if (vecField[x + nFieldSide * y] == player::AI)
+			isAI = true;
+		else if (vecField[x + nFieldSide * y] == player::Human)
+			isHuman = true;
+	}
+	if (!(isAI && isHuman))
+		return false;
+	//check second diagonal
+	isAI = false;
+	isHuman = false;
+	for (int x = nFieldSide - 1, y = 0; y < nFieldSide && x >= 0; x--, y++)
+	{
+		if (vecField[x + nFieldSide * y] == player::AI)
+			isAI = true;
+		else if (vecField[x + nFieldSide * y] == player::Human)
+			isHuman = true;
+	}
+	if (!(isAI && isHuman))
+		return false;
+	return true;
+}
+
 void TicTacToe::gameOver(player p)
 {
 	bGame = false;

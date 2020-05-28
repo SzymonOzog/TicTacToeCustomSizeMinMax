@@ -60,9 +60,10 @@ TEST(TicTacToeTests, HasWonTest)
     }
 }
 
-TEST(TicTacToeTest, isDrawTest)
+TEST(TicTacToeTests, isDrawTest)
 {
     std::vector<player> field(5 * 5);
+    TicTacToe g(5);
     field[0] = player::AI;
     field[4] = player::Human;
     field[6] = player::Human;
@@ -73,11 +74,11 @@ TEST(TicTacToeTest, isDrawTest)
     field[18] = player::Human;
     field[22] = player::Human;
     field[24] = player::AI;
-    t.vecField = field;
-    EXPECT_TRUE(t.isDraw());
+    g.vecField = field;
+    EXPECT_TRUE(g.isDraw());
     field[24] = player::None;
-    t.vecField = field;
-    EXPECT_TRUE(!t.isDraw());
+    g.vecField = field;
+    EXPECT_TRUE(!g.isDraw());
 }
 //Not really a test, just checking how long will the AI think 
 //when provided with an empty field
