@@ -12,88 +12,107 @@ void nullifyVector(std::vector<player> &f)
         x = player::None;
     }
 }
-//TEST(TicTacToeTests, HasWonTest)
-//{
-//    std::vector<player> v = { player::AI, player::Human };
-//    check for AI and Human victory
-//    for (auto p : v)
-//    {
-//        for (int i = 0; i < fieldSide; i++)
-//        {
-//            check horizontally
-//            nullifyVector(f);
-//            f[0 + i * fieldSide] = p;
-//            f[1 + i * fieldSide] = p;
-//            f[2 + i * fieldSide] = p;
-//            f[3 + i * fieldSide] = p;
-//            f[4 + i * fieldSide] = p;
-//            t.vecField = f;
-//            EXPECT_EQ(t.hasWon(), true);
-//            check veritically
-//            nullifyVector(f);
-//            f[0 + i] = p;
-//            f[5 + i] = p;
-//            f[10 + i] = p;
-//            f[15 + i] = p;
-//            f[20 + i] = p;
-//            t.vecField = f;
-//            EXPECT_EQ(t.hasWon(), true);
-//        }
-//        check diagonally
-//        nullifyVector(f);
-//        f[0] = p;
-//        f[6] = p;
-//        f[12] = p;
-//        f[18] = p;
-//        f[24] = p;
-//        t.vecField = f;
-//        EXPECT_EQ(t.hasWon(), true);
-//        check second diagonal
-//        nullifyVector(f);
-//        f[4] = p;
-//        f[8] = p;
-//        f[12] = p;
-//        f[16] = p;
-//        f[20] = p;
-//        t.vecField = f;
-//        EXPECT_EQ(t.hasWon(), true);
-//    }
-//}
-//
+TEST(TicTacToeTests, HasWonTest)
+{
+    std::vector<player> v = { player::AI, player::Human };
+   // check for AI and Human victory
+    for (auto p : v)
+    {
+        for (int i = 0; i < fieldSide; i++)
+        {
+            //check horizontally
+            nullifyVector(f);
+            f[0 + i * fieldSide] = p;
+            f[1 + i * fieldSide] = p;
+            f[2 + i * fieldSide] = p;
+            f[3 + i * fieldSide] = p;
+            f[4 + i * fieldSide] = p;
+            t.vecField = f;
+            EXPECT_EQ(t.hasWon(), true);
+           // check veritically
+            nullifyVector(f);
+            f[0 + i] = p;
+            f[5 + i] = p;
+            f[10 + i] = p;
+            f[15 + i] = p;
+            f[20 + i] = p;
+            t.vecField = f;
+            EXPECT_EQ(t.hasWon(), true);
+        }
+        //check diagonally
+        nullifyVector(f);
+        f[0] = p;
+        f[6] = p;
+        f[12] = p;
+        f[18] = p;
+        f[24] = p;
+        t.vecField = f;
+        EXPECT_EQ(t.hasWon(), true);
+        //check second diagonal
+        nullifyVector(f);
+        f[4] = p;
+        f[8] = p;
+        f[12] = p;
+        f[16] = p;
+        f[20] = p;
+        t.vecField = f;
+        EXPECT_EQ(t.hasWon(), true);
+    }
+}
+
+TEST(TicTacToeTest, isDrawTest)
+{
+    std::vector<player> field(5 * 5);
+    field[0] = player::AI;
+    field[4] = player::Human;
+    field[6] = player::Human;
+    field[8] = player::AI;
+    field[10] = player::Human;
+    field[12] = player::AI;
+    field[16] = player::AI;
+    field[18] = player::Human;
+    field[22] = player::Human;
+    field[24] = player::AI;
+    t.vecField = field;
+    EXPECT_TRUE(t.isDraw());
+    field[24] = player::None;
+    t.vecField = field;
+    EXPECT_TRUE(!t.isDraw());
+}
 //Not really a test, just checking how long will the AI think 
 //when provided with an empty field
-//TEST(AITests, EmptyFieldTimeElapse)
-//{
-//    nullifyVector(f);
-//    t.vecField = f;
-//    std::pair<int, int> choice = t.findBestMove();
-//}
-//TEST(AITests, WillWin)
-//{
-//    nullifyVector(f);
-//    f[5] = player::AI;
-//    f[6] = player::AI;
-//    f[7] = player::AI;
-//    f[8] = player::AI;
-//    t.vecField = f;
-//    std::pair<int, int> choice = t.findBestMove();
-//    EXPECT_EQ(choice.second, 9);
-//}
-//TEST(AITests, WillBlockPlayerWin)
-//{
-//    nullifyVector(f);
-//    f[0] = player::AI;
-//    f[1] = player::AI;
-//    f[2] = player::AI;
-//    f[5] = player::Human;
-//    f[6] = player::Human;
-//    f[7] = player::Human;
-//    f[8] = player::Human;
-//    t.vecField = f;
-//    std::pair<int, int> choice = t.findBestMove();
-//    EXPECT_EQ(choice.second, 9);
-//}
-//
+TEST(AITests, EmptyFieldTimeElapse)
+{
+    nullifyVector(f);
+    t.vecField = f;
+    std::pair<int, int> choice = t.findBestMove();
+}
+TEST(AITests, WillWin)
+{
+    nullifyVector(f);
+    f[5] = player::AI;
+    f[6] = player::AI;
+    f[7] = player::AI;
+    f[8] = player::AI;
+    t.vecField = f;
+    std::pair<int, int> choice = t.findBestMove();
+    EXPECT_EQ(choice.second, 9);
+}
+TEST(AITests, WillBlockPlayerWin)
+{
+    nullifyVector(f);
+    f[0] = player::AI;
+    f[1] = player::AI;
+    f[2] = player::AI;
+    f[5] = player::Human;
+    f[6] = player::Human;
+    f[7] = player::Human;
+    f[8] = player::Human;
+    t.vecField = f;
+    std::pair<int, int> choice = t.findBestMove();
+    EXPECT_EQ(choice.second, 9);
+}
+
 void playEveryBoard(TicTacToe g)
 {
     int bestMove = 0;
