@@ -46,6 +46,7 @@ private:
 	inline COORD fieldToCoord(int p) { short x = p % nFieldSide; short y = p / nFieldSide; return { x * 2 + 1, y * 2 + 1 }; }
 	inline int fieldToScreen(int p) { return coordToScreen(fieldToCoord(p)); }
 	inline player getOpponent(player p) { return p == player::AI ? player::Human : player::AI;  }
+	inline bool canDrawOrWin() { return std::count(vecField.begin(), vecField.end(), player::None) <= vecField.size() + 1 - 2 * nFieldSide;	}
 	void createField();
 	void printFinalMessage();
 	void setConsoleProperties();
