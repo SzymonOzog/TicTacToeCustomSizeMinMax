@@ -5,65 +5,52 @@ int TicTacToe::nFieldSide;
 TicTacToe t(fieldSide);
 std::vector<player> f(fieldSide* fieldSide);
 
-void nullifyVector(std::vector<player> &f)
+TEST(FieldTests, HasWonTest)
 {
-    for (auto& x : f)
-    {
-        x = player::None;
-    }
-}
-TEST(TicTacToeTests, HasWonTest)
-{
-    std::vector<player> v = { player::AI, player::Human };
-   // check for AI and Human victory
-    for (auto p : v)
+    Field f(5 * 5);
+    for (auto p : { player::AI, player::Human })
     {
         for (int i = 0; i < fieldSide; i++)
         {
             //check horizontally
-            nullifyVector(f);
+            f.nullify();
             f[0 + i * fieldSide] = p;
             f[1 + i * fieldSide] = p;
             f[2 + i * fieldSide] = p;
             f[3 + i * fieldSide] = p;
             f[4 + i * fieldSide] = p;
-            t.vecField = f;
-            EXPECT_EQ(t.hasWon(), true);
+            EXPECT_EQ(f.hasWon(), true);
            // check veritically
-            nullifyVector(f);
+            f.nullify();
             f[0 + i] = p;
             f[5 + i] = p;
             f[10 + i] = p;
             f[15 + i] = p;
             f[20 + i] = p;
-            t.vecField = f;
-            EXPECT_EQ(t.hasWon(), true);
+            EXPECT_EQ(f.hasWon(), true);
         }
         //check diagonally
-        nullifyVector(f);
+        f.nullify();
         f[0] = p;
         f[6] = p;
         f[12] = p;
         f[18] = p;
         f[24] = p;
-        t.vecField = f;
-        EXPECT_EQ(t.hasWon(), true);
+        EXPECT_EQ(f.hasWon(), true);
         //check second diagonal
-        nullifyVector(f);
+        f.nullify();
         f[4] = p;
         f[8] = p;
         f[12] = p;
         f[16] = p;
         f[20] = p;
-        t.vecField = f;
-        EXPECT_EQ(t.hasWon(), true);
+        EXPECT_EQ(f.hasWon(), true);
     }
 }
 
-TEST(TicTacToeTests, isDrawTest)
+TEST(FieldTests, isDrawTest)
 {
-    std::vector<player> field(5 * 5);
-    TicTacToe game(5);
+    Field field(5 * 5);
     field[0] = player::AI;
     field[4] = player::Human;
     field[6] = player::Human;
@@ -74,79 +61,78 @@ TEST(TicTacToeTests, isDrawTest)
     field[18] = player::Human;
     field[22] = player::Human;
     field[24] = player::AI;
-    game.vecField = field;
-    EXPECT_TRUE(game.isDraw());
+    EXPECT_TRUE(field.isDraw());
     field[24] = player::None;
-    game.vecField = field;
-    EXPECT_TRUE(!game.isDraw());
+    EXPECT_TRUE(!field.isDraw());
 }
 //Not really a test, just checking how long will the AI think 
 //when provided with an empty field
 TEST(AITests, EmptyFieldTimeElapse)
 {
-    nullifyVector(f);
-    t.vecField = f;
-    std::pair<int, int> choice = t.findBestMove();
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
+    AI ai(field);
+    std::pair<int, int> choice = ai.findBestMove();
 }
 TEST(AITests, WillWin)
 {
-    nullifyVector(f);
-    f[5] = player::AI;
-    f[6] = player::AI;
-    f[7] = player::AI;
-    f[8] = player::AI;
-    t.vecField = f;
-    std::pair<int, int> choice = t.findBestMove();
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
+    AI ai(field);
+    (*field)[5] = player::AI;
+    (*field)[6] = player::AI;
+    (*field)[7] = player::AI;
+    (*field)[8] = player::AI;
+    std::pair<int, int> choice = ai.findBestMove();
     EXPECT_EQ(choice.second, 9);
 }
 TEST(AITests, WillBlockPlayerWin)
 {
-    nullifyVector(f);
-    f[0] = player::AI;
-    f[1] = player::AI;
-    f[2] = player::AI;
-    f[5] = player::Human;
-    f[6] = player::Human;
-    f[7] = player::Human;
-    f[8] = player::Human;
-    t.vecField = f;
-    std::pair<int, int> choice = t.findBestMove();
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
+    AI ai(field);
+    (*field)[0] = player::AI;
+    (*field)[1] = player::AI;
+    (*field)[2] = player::AI;
+    (*field)[5] = player::Human;
+    (*field)[6] = player::Human;
+    (*field)[7] = player::Human;
+    (*field)[8] = player::Human;
+    std::pair<int, int> choice = ai.findBestMove();
     EXPECT_EQ(choice.second, 9);
 }
 
-void playEveryBoard(TicTacToe g)
+void playEveryBoard(AI ai, std::shared_ptr<Field> f)
 {
     int bestMove = 0;
-    auto it = g.vecField.begin();
+    auto it = f->begin();
     while (true)
     {
-        it = std::find(it, g.vecField.end(), player::None);
-        if (it == g.vecField.end())
+        it = std::find(it, f->end(), player::None);
+        if (it == f->end())
             break;
         *it = player::Human;
         //if (g.hasWon())
         //    std::cout << std::endl;
         EXPECT_TRUE(!g.hasWon());
 
-        bestMove = g.findBestMove().second;
+        bestMove = ai.findBestMove().second;
         if (bestMove == -1)//TIE
             break;
 
-        g.vecField[bestMove] = player::AI;
-        if (g.hasWon())//AI WIN
+        (*f)[bestMove] = player::AI;
+        if (f->hasWon())//AI WIN
            break;
 
-        playEveryBoard(g);
+        playEveryBoard(ai, f);
 
         *it = player::None;
-        g.vecField[bestMove] = player::None;
-        if (it == g.vecField.end())
+        (*f)[bestMove] = player::None;
+        if (it == f->end())
             break;
         it++;
     }
 }
 TEST(AcceptanceTest, EveryBoard)
 {
-    TicTacToe g(3);
+    std::shared_ptr<Field> field = std::make_shared<Field>(3);
+    AI ai(field);
     playEveryBoard(g);
 }
