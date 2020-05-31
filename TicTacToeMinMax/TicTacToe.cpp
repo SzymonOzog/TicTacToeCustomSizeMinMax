@@ -6,20 +6,17 @@
 #include <utility>
 #include "TicTacToe.h"
 
+int AI::nFieldSide;
+
 TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
 {
 	nFieldSide = fieldSide;
-	hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
 	createScreen();
-	createField();
+	field = std::make_shared<Field>(fieldSide * fieldSide);
+	console = std::make_unique<Console>(nScreenWidth, nScreenHeight);
+	ai = std::make_unique<AI>(field);
 }
-void TicTacToe::createField()
-{
-	vecField.reserve(nFieldSide * nFieldSide);
-	for (int i = 0; i < nFieldSide * nFieldSide; i++)
-		vecField.emplace_back(player::None);
-}
+
 
 void TicTacToe::createScreen()
 {
@@ -50,78 +47,46 @@ TicTacToe::~TicTacToe()
 
 void TicTacToe::start()
 {
-	setConsoleProperties();
 	playGame();
 	printFinalMessage();
 }
 
-void TicTacToe::setConsoleProperties()
-{
-	setWindowSize();
-	disableWindowResizablility();
-	disableCursorVisibility();
-	SetConsoleMode(hConsoleIn, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
-}
-
-void TicTacToe::setWindowSize()
-{
-	std::string sConsoleProps = "MODE CON COLS=" + std::to_string(nScreenWidth) + " LINES=" + std::to_string(nScreenHeight);
-	system(sConsoleProps.c_str());
-}
-
-void TicTacToe::disableWindowResizablility()
-{
-	HWND consoleWindow = GetConsoleWindow();
-	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
-}
-
-void TicTacToe::disableCursorVisibility()
-{
-	CONSOLE_CURSOR_INFO cursorInfo;
-	GetConsoleCursorInfo(hConsoleOut, &cursorInfo);
-	cursorInfo.bVisible = false;
-	SetConsoleCursorInfo(hConsoleOut, &cursorInfo);
-}
 
 void TicTacToe::playGame()
 {
-	DWORD dwEvents = 0;
-	COORD coord = { 0,0 };
-	DWORD dwBytesWritten = 0;
-	INPUT_RECORD Input;
 
+	COORD coord = { 0,0 };
 	while (bGame)
 	{
-		ReadConsoleInput(hConsoleIn, &Input, 1, &dwEvents);
-		if (Input.EventType == KEY_EVENT)
+		console->listen();
+		if (console->isKeyEvent())
 		{
-			if (Input.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
+			if (console->isEscEvent())
 				bGame = false;
 		}
-		if (Input.EventType == MOUSE_EVENT)
+		if (console->isMouseEvent())
 		{
-			if (Input.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+			if (console->isLMBEvent())
 			{
-				coord = Input.Event.MouseEvent.dwMousePosition;
+				coord = console->getMousePosition();
 				if (isViableCoord(coord))
 				{
 					screen[coordToScreen(coord)] = 'X';
-					vecField[coordToField(coord)] = player::Human;
-					//if somebody won at this point - it was the player
-					if (hasWon())
+					(*field)[coordToField(coord)] = player::Human;
+					if (field->hasWon())
 					{
 						gameOver(player::Human);
 						break;
 					}
-					int aiMove = findBestMove().second;
+					int aiMove = ai->findBestMove().second;
 					if (aiMove == -1)
 					{
 						gameOver(player::None);
 						break;
 					}
 					screen[fieldToScreen(aiMove)] = 'O';
-					vecField[aiMove] = player::AI;
-					if (hasWon())
+					(*field)[aiMove] = player::AI;
+					if (field->hasWon())
 					{
 						gameOver(player::AI);
 						break;
@@ -131,135 +96,8 @@ void TicTacToe::playGame()
 		}
 		//null terminator for safety
 		screen[nScreenWidth * nScreenHeight - 1] = '\0';
-		WriteConsoleOutputCharacter(hConsoleOut, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten);
+		console->outputScreen(screen);
 	}
-}
-
-std::pair<int, int> TicTacToe::findBestMove(int reverseDepth, std::pair<int, int> bestScoreMove, player currentPlayer, int alpha, int beta)
-{
-	if (canDrawOrWin())
-	{
-		if (hasWon())
-			return { reverseDepth * static_cast<int>(currentPlayer), -1 };
-		if (isDraw())
-			return { 0, -1 };
-	}
-	bestScoreMove.first = (currentPlayer == player::AI ? INT_MIN : INT_MAX);
-	for (int i = 0; i < vecField.size(); i++)
-	{
-		if (vecField[i] == player::None)
-		{
-			vecField[i] = currentPlayer;
-			int score = findBestMove(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta).first;
-			if (currentPlayer == player::AI)
-			{
-				alpha = std::max(alpha, score);
-				if (bestScoreMove.first < score)
-					bestScoreMove = { score, i };
-			}
-			else
-			{
-				beta = std::min(beta, score);
-				if (bestScoreMove.first > score)
-					bestScoreMove = { score, i };
-			}
-			vecField[i] = player::None;
-			if (beta <= alpha)
-				break;
-		}
-	}
-	return bestScoreMove;
-}
-
-bool TicTacToe::hasWon()
-{
-	int sum, winningCase;
-	for (int i = 0; i < nFieldSide; i++)
-	{
-		sum = 0;
-		winningCase = 0;
-		//check horizontally
-		while (abs(sum) == winningCase && winningCase < nFieldSide)
-			sum += static_cast<int>(vecField[winningCase++ + i*nFieldSide]);
-		if (abs(sum) == nFieldSide)
-			return true;
-		//check veritically 
-		sum = 0;
-		winningCase = 0;
-		while (abs(sum) == winningCase && winningCase < nFieldSide)
-			sum += static_cast<int>(vecField[nFieldSide*winningCase++ + i]);
-		if (abs(sum) == nFieldSide)
-			return true;
-	}
-	//check first diagonal
-	sum = 0;
-	for (int x = 0, y=0; y < nFieldSide && x< nFieldSide; x++, y++)
-		sum += static_cast<int>(vecField[y*nFieldSide+x]);
-	if (abs(sum) == nFieldSide)
-		return true;
-	//check second diagonal
-	sum = 0;
-	for (int x = nFieldSide - 1, y = 0; y < nFieldSide && x >=0; x--, y++)
-		sum += static_cast<int>(vecField[y * nFieldSide + x]);
-	if (abs(sum) == nFieldSide)
-		return true;
-	return false;
-}
-
-bool TicTacToe::isDraw()
-{
-	bool isAI, isHuman;
-	for (int i = 0; i < nFieldSide; i++)
-	{
-		isAI = false;
-		isHuman = false;
-		for (int j = 0; j < nFieldSide; j++)
-		{
-			if (vecField[i * nFieldSide + j] == player::AI)
-				isAI = true;
-			else if (vecField[i * nFieldSide + j] == player::Human)
-				isHuman = true;
-		}
-		if (!(isAI && isHuman))
-			return false;
-
-		isAI = false;
-		isHuman = false;
-		for (int j = 0; j < nFieldSide; j++)
-		{
-			if (vecField[i + nFieldSide * j] == player::AI)
-				isAI = true;
-			else if (vecField[i + nFieldSide * j] == player::Human)
-				isHuman = true;
-		}
-		if (!(isAI && isHuman))
-			return false;
-	}
-	//check first diagonal
-	isAI = false;
-	isHuman = false;
-	for (int x = 0, y = 0; y < nFieldSide && x < nFieldSide; x++, y++)
-	{
-		if (vecField[x + nFieldSide * y] == player::AI)
-			isAI = true;
-		else if (vecField[x + nFieldSide * y] == player::Human)
-			isHuman = true;
-	}
-	if (!(isAI && isHuman))
-		return false;
-	//check second diagonal
-	isAI = false;
-	isHuman = false;
-	for (int x = nFieldSide - 1, y = 0; y < nFieldSide && x >= 0; x--, y++)
-	{
-		if (vecField[x + nFieldSide * y] == player::AI)
-			isAI = true;
-		else if (vecField[x + nFieldSide * y] == player::Human)
-			isHuman = true;
-	}
-	if (!(isAI && isHuman))
-		return false;
-	return true;
 }
 
 void TicTacToe::gameOver(player p)
@@ -281,6 +119,6 @@ void TicTacToe::gameOver(player p)
 
 void TicTacToe::printFinalMessage()
 {
-	SetConsoleCursorPosition(hConsoleOut, { 0, static_cast<short>(nBorderSide + 1) });
+	console->setCursorPosition(0, nBorderSide + 1);
 	std::cout << sFinalMessage << std::endl;
 }

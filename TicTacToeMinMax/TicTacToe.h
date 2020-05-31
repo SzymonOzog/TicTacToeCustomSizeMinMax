@@ -1,15 +1,10 @@
 #pragma once
-#define NOMINMAX //no windows.h I don`t want to use your terrible min and max macros
-#include <Windows.h>
 #include <string>
 #include <vector>
 #include <memory>
-enum class player : short
-{
-	AI = -1,
-	None = 0,
-	Human = 1
-};
+#include "Field.h"
+#include "AI.h"
+#include "Console.h"
 class TicTacToe
 {
 public: 
@@ -20,41 +15,27 @@ public:
 private:
 	static const int nScreenWidth = 80;
 	static const int nScreenHeight = 30;
-
 	static int nFieldSide;
 	const int nBorderSide;
 	bool bGame = true;
 	std::string sFinalMessage;
-	//Screen buffer - we will be outputting this to the screen
 	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
-
-	HANDLE hConsoleOut = nullptr;
-	HANDLE hConsoleIn = nullptr;
+	std::shared_ptr<Field> field;
+	std::unique_ptr<Console> console;
+	std::unique_ptr<AI> ai;
 
 public:
 	void start();
-	//TODO - all of this should be private but rn I have no idea how to test private functions
-	std::vector<player> vecField;
-	void createScreen();
-	std::pair<int, int> findBestMove(int reverseDepth = nFieldSide * nFieldSide, std::pair<int, int> bestScoreMove = { 0, -1 }, player currentPlayer = player::AI, int alpha = INT_MIN, int beta = INT_MAX);
-	bool hasWon();
-	bool isDraw();
-	void gameOver(player p);
 private:
 	inline bool isViableCoord(COORD coord) { return (coord.X < nBorderSide && coord.Y < nBorderSide && screen[coord.Y * nScreenWidth + coord.X] == ' '); }
 	inline int coordToScreen(COORD c) { return c.Y * nScreenWidth + c.X; }
 	inline int coordToField(COORD c) { return c.Y / 2 * nFieldSide + c.X / 2; }
 	inline COORD fieldToCoord(int p) { short x = p % nFieldSide; short y = p / nFieldSide; return { x * 2 + 1, y * 2 + 1 }; }
 	inline int fieldToScreen(int p) { return coordToScreen(fieldToCoord(p)); }
-	inline player getOpponent(player p) { return p == player::AI ? player::Human : player::AI;  }
-	inline bool canDrawOrWin() { return std::count(vecField.begin(), vecField.end(), player::None) <= vecField.size() + 1 - 2 * nFieldSide;	}
-	void createField();
+	void createScreen();
 	void printFinalMessage();
-	void setConsoleProperties();
-	void setWindowSize();
-	void disableWindowResizablility();
-	void disableCursorVisibility();
 	void playGame();
+	void gameOver(player p);
 
 
 };
