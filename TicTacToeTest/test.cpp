@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "TicTacToe.h"
 int TicTacToe::nFieldSide;
-int AI::nFieldSide;
+//int AI::nFieldSide;
 TEST(FieldTests, HasWonTest)
 {
     int fieldSide = 5;
