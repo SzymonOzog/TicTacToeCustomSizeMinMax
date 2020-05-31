@@ -19,8 +19,9 @@ public:
 	inline bool canDrawOrWin() { return std::count(vecField.begin(), vecField.end(), player::None) <= vecField.size() + 1 - 2 * nFieldSide; }
 
 	player& operator [] (int i) { return vecField[i]; }
-	auto begin() { return vecField.begin(); }
-	auto end() { return vecField.end(); }
+	inline auto begin() { return vecField.begin(); }
+	inline auto end() { return vecField.end(); }
+	inline size_t size() { return vecField.size(); }
 
 private:
 	int nFieldSide;
