@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "TicTacToe.h"
 int TicTacToe::nFieldSide;
-//int AI::nFieldSide;
 TEST(FieldTests, HasWonTest)
 {
     int fieldSide = 5;
@@ -65,12 +64,12 @@ TEST(FieldTests, isDrawTest)
 }
 //Not really a test, just checking how long will the AI think 
 //when provided with an empty field
-//TEST(AITests, EmptyFieldTimeElapse)
-//{
-//    std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
-//    AI ai(field);
-//    std::pair<int, int> choice = ai.findBestMove();
-//}
+TEST(AITests, EmptyFieldTimeElapse)
+{
+    std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
+    AI ai(field);
+    std::pair<int, int> choice = ai.findBestMove();
+}
 TEST(AITests, WillWin)
 {
     std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
