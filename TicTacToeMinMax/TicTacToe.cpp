@@ -13,6 +13,7 @@ TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
 	nFieldSide = fieldSide;
 	createScreen();
 	field = std::make_shared<Field>(fieldSide * fieldSide);
+	//TODO - tests won`t run with this line in costructor
 	console = std::make_unique<Console>(nScreenWidth, nScreenHeight);
 	ai = std::make_unique<AI>(field);
 }
