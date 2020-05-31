@@ -32,7 +32,7 @@ project "TicTacToeTest"
 	includedirs {"TicTacToeMinMax"}
 	nuget{"Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.3"}
 	
-	files{"%{prj.name}/**.h", "%{prj.name}/**.cpp", "TicTacToeMinMax/TicTacToe.h", "TicTacToeMinMax/TicTacToe.cpp"}
+	files{"%{prj.name}/**.h", "%{prj.name}/**.cpp", "TicTacToeMinMax/TicTacToe.h", "TicTacToeMinMax/TicTacToe.cpp", "TicTacToeMinMax/Field.h", "TicTacToeMinMax/Field.cpp" , "TicTacToeMinMax/AI.h", "TicTacToeMinMax/AI.cpp"}
 	
 	cppdialect "C++17"
 	systemversion "latest"
