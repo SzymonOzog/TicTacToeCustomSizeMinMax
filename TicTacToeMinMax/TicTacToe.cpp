@@ -73,8 +73,8 @@ void TicTacToe::playGame()
 				if (isViableCoord(coord))
 				{
 					screen[coordToScreen(coord)] = 'X';
-					(*field)[coordToField(coord)] = player::Human;
-					if (field->hasWon())
+					field->set(coordToField(coord), player::Human);
+					if (field->getState() == field::Won)
 					{
 						gameOver(player::Human);
 						break;
@@ -86,8 +86,8 @@ void TicTacToe::playGame()
 						break;
 					}
 					screen[fieldToScreen(aiMove)] = 'O';
-					(*field)[aiMove] = player::AI;
-					if (field->hasWon())
+					field->set(aiMove, player::AI);
+					if (field->getState() == field::Won)
 					{
 						gameOver(player::AI);
 						break;

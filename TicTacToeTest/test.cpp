@@ -66,15 +66,15 @@ TEST(FieldTests, isDrawTest)
 TEST(FieldTest, fullFieldWin)
 {
     Field field(3 * 3);
+    field.set(0, player::AI);
     field.set(1, player::AI);
     field.set(2, player::AI);
-    field.set(3, player::AI);
+    field.set(3, player::Human);
     field.set(4, player::Human);
-    field.set(5, player::Human);
-    field.set(6, player::AI);
-    field.set(7, player::Human);
-    field.set(8, player::AI);
-    field.set(9, player::Human);
+    field.set(5, player::AI);
+    field.set(6, player::Human);
+    field.set(7, player::AI);
+    field.set(8, player::Human);
     EXPECT_EQ(field.getState(), field::Won);
 }
 //Not really a test, just checking how long will the AI think 
@@ -89,13 +89,13 @@ TEST(AITests, WillWin)
 {
     std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
     AI ai(field);
-    (*field)[0] = player::AI;
-    (*field)[1] = player::AI;
-    (*field)[2] = player::AI;
-    (*field)[8] = player::Human;
-    (*field)[4] = player::Human;
-    (*field)[7] = player::Human;
-    (*field)[15] = player::Human;
+    field->set(0, player::AI);
+    field->set(1, player::AI);
+    field->set(2, player::AI);
+    field->set(8, player::Human);
+    field->set(4, player::Human);
+    field->set(7, player::Human);
+    field->set(15, player::Human);
 
     std::pair<int, int> choice = ai.findBestMove();
     EXPECT_EQ(choice.second, 3);
@@ -104,13 +104,13 @@ TEST(AITests, WillBlockPlayerWin)
 {
     std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
     AI ai(field);
-    (*field)[0] = player::AI;
-    (*field)[1] = player::AI;
-    (*field)[9] = player::AI;
-    (*field)[4] = player::Human;
-    (*field)[5] = player::Human;
-    (*field)[6] = player::Human;
-    (*field)[8] = player::Human;
+    field->set(0, player::AI);
+    field->set(1, player::AI);
+    field->set(9, player::AI);
+    field->set(4, player::Human);
+    field->set(5, player::Human);
+    field->set(6, player::Human);
+    field->set(8, player::Human);
     std::pair<int, int> choice = ai.findBestMove();
     EXPECT_EQ(choice.second, 7);
 }
@@ -124,29 +124,29 @@ void playEveryBoard(AI ai, std::shared_ptr<Field> f)
         it = std::find(it, f->end(), player::None);
         if (it == f->end())
             break;
-        *it = player::Human;
-        if (f->hasWon())
-            std::cout << std::endl;
-        EXPECT_TRUE(!f->hasWon());
+        f->set(it - f->begin(), player::Human);
+        if (f->getState() == field::Won) 
+            std::cout << std::endl; // just a breakpoint for debugging purposes
+        EXPECT_TRUE(!(f->getState() == field::Won));
 
         bestMove = ai.findBestMove().second;
         if (bestMove == -1)//TIE
         {
-            *it = player::None;
+            f->set(it - f->begin(), player::None);
             break;
         }
-        (*f)[bestMove] = player::AI;
-        if (f->hasWon())//AI WIN
+        f->set(bestMove, player::AI);
+        if (f->getState() == field::Won)//AI WIN
         {
-            *it = player::None;
-            (*f)[bestMove] = player::None;
+            f->set(it - f->begin(), player::None);
+            f->set(bestMove, player::None);
             break;
         }
 
         playEveryBoard(ai, f);
 
-        *it = player::None;
-        (*f)[bestMove] = player::None;
+        f->set(it - f->begin(), player::None);
+        f->set(bestMove, player::None);
         if (it == f->end())
             break;
         it++;
