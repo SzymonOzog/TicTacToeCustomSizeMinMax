@@ -7,6 +7,12 @@ enum class player : short
 	None = 0,
 	Human = 1
 };
+enum class field : short
+{
+	None = 0,
+	Draw,
+	Won
+};
 class Field
 {
 public:
