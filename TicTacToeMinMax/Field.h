@@ -30,11 +30,10 @@ public:
 	inline size_t size() { return vecField.size(); }
 private:
 	void updateState(int i);
-	field checkColumn(int column);
-	field checkRow(int row);
-	field checkFirstDiagonal();
-	field checkSecondDiagonal();
-	inline bool hasWon() { return std::find(vecStates.begin(), vecStates.end(), field::Won) != vecStates.end(); }
+	bool checkColumn(int column);
+	bool checkRow(int row);
+	bool checkFirstDiagonal();
+	bool checkSecondDiagonal();
 	inline bool isDraw() { return std::find(vecField.begin(), vecField.end(), player::None) == vecField.end(); }
 	inline bool isOnFirstDiagonal(int i) { return getRow(i) == getColumn(i); } 
 	inline bool isOnSecondDiagonal(int i) {	return nFieldSide - 1 - getRow(i) == getColumn(i);}
@@ -46,7 +45,6 @@ private:
 	int nFieldSide;
 	int fieldsTaken = 0;
 	std::vector<player> vecField;
-	std::vector<field> vecStates; 	
 	field fieldState = field::None;
 };
 
