@@ -22,16 +22,14 @@ void Field::nullify()
 void Field::set(int i, player p)
 {
 	vecField[i] = p;
-	//TODO this line makes HasWon and isDraw test fail
-	//TODO this line makes human loose after making first move
-	//if (canDrawOrWin())
+	fieldsTaken += p == player::None ? -1 : 1;
 		updateState(i);
 }
 
 void Field::updateState(int i)
 {
-	vecStates[getRow(i)] = checkRow(i);
-	vecStates[nFieldSide + getColumn(i)] = checkColumn(i);
+	vecStates[getRow(i)] = checkRow(getRow(i));
+	vecStates[nFieldSide + getColumn(i)] = checkColumn(getColumn(i));
 	if (isOnFirstDiagonal(i))
 		vecStates[2 * nFieldSide] = checkFirstDiagonal();
 	if (isOnSecondDiagonal(i))
@@ -44,80 +42,46 @@ void Field::updateState(int i)
 		fieldState = field::None;
 }
 
-field Field::checkRow(int i)
+field Field::checkRow(int row)
 {
-	int row = getRow(i); 
-	bool isAI= false, isHuman = false;
+	int column = 0; 
 	int sum = 0;
-	for (int column = 0; column < nFieldSide; column++)
-	{
-		if (vecField[row * nFieldSide + column] == player::AI)
-			isAI = true;
-		else if (vecField[row * nFieldSide + column] == player::Human)
-			isHuman = true;
-		sum += static_cast<int>(vecField[row * nFieldSide + column]);
-	}
+	while (column == abs(sum) && coordInsideField(column, row))
+		sum += static_cast<int>(vecField[coordToField(column++, row)]);
 	if (abs(sum) == nFieldSide)
 		return field::Won;
-	else if (isAI && isHuman)
-		return field::Draw;
 	return field::None;
 }
 
-field Field::checkColumn(int i)
+field Field::checkColumn(int column)
 {
-	int column = getColumn(i);
-	bool isAI = false, isHuman = false;
+	int row = 0;
 	int sum = 0;
-	for (int row = 0; row < nFieldSide; row++)
-	{
-		if (vecField[row * nFieldSide + column] == player::AI)
-			isAI = true;
-		else if (vecField[row * nFieldSide + column] == player::Human)
-			isHuman = true;
-		sum += static_cast<int>(vecField[row * nFieldSide + column]);
-	}
+	while (row == abs(sum) && coordInsideField(column, row))
+		sum += static_cast<int>(vecField[coordToField(column, row++)]);
 	if (abs(sum) == nFieldSide)
 		return field::Won;
-	else if (isAI && isHuman)
-		return field::Draw;
 	return field::None;
 }
 
 field Field::checkFirstDiagonal()
 {
-	bool isAI = false, isHuman = false;
+	int row = 0, column = 0;
 	int sum = 0;
-	for (int row = 0, column = 0; row < nFieldSide && column < nFieldSide; row++, column++)
-	{
-		if (vecField[row * nFieldSide + column] == player::AI)
-			isAI = true;
-		else if (vecField[row * nFieldSide + column] == player::Human)
-			isHuman = true;
-		sum += static_cast<int>(vecField[row * nFieldSide + column]);
-	}
+	while (row == abs(sum) && coordInsideField(column, row))
+		sum += static_cast<int>(vecField[coordToField(column++, row++)]);
 	if (abs(sum) == nFieldSide)
 		return field::Won;
-	else if (isAI && isHuman)
-		return field::Draw;
 	return field::None;
 }
 
 field Field::checkSecondDiagonal()
 {
-	bool isAI = false, isHuman = false;
+	int row = 0, column = nFieldSide-1;
 	int sum = 0;
-	for (int row = 0, column = nFieldSide - 1; row < nFieldSide && column >= 0; row++, column--)
-	{
-		if (vecField[row * nFieldSide + column] == player::AI)
-			isAI = true;
-		else if (vecField[row * nFieldSide + column] == player::Human)
-			isHuman = true;
-		sum += static_cast<int>(vecField[row * nFieldSide + column]);
-	}
+	while (row == abs(sum) && coordInsideField(column, row))
+		sum += static_cast<int>(vecField[coordToField(column--, row++)]);
 	if (abs(sum) == nFieldSide)
 		return field::Won;
-	else if (isAI && isHuman)
-		return field::Draw;
 	return field::None;
 }
