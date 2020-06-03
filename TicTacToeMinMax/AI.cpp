@@ -1,9 +1,9 @@
 #include "AI.h"
-std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestScoreMove, player currentPlayer, int alpha, int beta)
+std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestScoreMove, player currentPlayer, int alpha, int beta, int lastPlay)
 {
-	if (field->canDrawOrWin())
+	if (field->canDrawOrWin() && lastPlay != -1)
 	{
-		if (field->hasWon())
+		if (field->hasWon(lastPlay))
 			return { reverseDepth * static_cast<int>(currentPlayer), -1 };
 		else if (field->isDraw())
 			return { 0, -1 };
@@ -14,7 +14,7 @@ std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestS
 		if ((*field)[i] == player::None)
 		{
 			(*field)[i] = currentPlayer;
-			int score = findBestMove(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta).first;
+			int score = findBestMove(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i).first;
 			if (currentPlayer == player::AI)
 			{
 				alpha = std::max(alpha, score);

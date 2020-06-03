@@ -47,19 +47,18 @@ TEST(FieldTests, HasWonTest)
 
 TEST(FieldTests, isDrawTest)
 {
-    Field field(5 * 5);
+    Field field(3*3);
     field[0] = player::AI;
+    field[1] = player::Human;
+    field[2] = player::AI;
+    field[3] = player::AI;
     field[4] = player::Human;
+    field[5] = player::AI;
     field[6] = player::Human;
-    field[8] = player::AI;
-    field[10] = player::Human;
-    field[12] = player::AI;
-    field[16] = player::AI;
-    field[18] = player::Human;
-    field[22] = player::Human;
-    field[24] = player::AI;
+    field[7] = player::AI;
+    field[8] = player::Human;
     EXPECT_TRUE(field.isDraw());
-    field[24] = player::None;
+    field[0] = player::None;
     EXPECT_TRUE(!field.isDraw());
 }
 //Not really a test, just checking how long will the AI think 
