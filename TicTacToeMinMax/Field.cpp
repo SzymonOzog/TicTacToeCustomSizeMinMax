@@ -1,14 +1,15 @@
 #include "Field.h"
 #include <cmath>
-Field::Field(int size) : nFieldSide(sqrt(size))
+Field::Field(int side) : fieldSide(side)
 {
+	int size = side * side;
 	vecField.reserve(size);
 	while (size--)
 		vecField.emplace_back(player::None);
 }
 bool Field::hasWon()
 {
-	for (int i = 0; i < nFieldSide; i++)
+	for (int i = 0; i < fieldSide; i++)
 	{
 		if (checkRow(i))
 			return true;
@@ -49,7 +50,7 @@ bool Field::checkRow(int row)
 	int sum = 0;
 	while (column == abs(sum) && coordInsideField(column, row))
 		sum += static_cast<int>(vecField[coordToField(column++, row)]);
-	if (abs(sum) == nFieldSide)
+	if (abs(sum) == fieldSide)
 		return true;
 	return false;
 }
@@ -60,7 +61,7 @@ bool Field::checkColumn(int column)
 	int sum = 0;
 	while (row == abs(sum) && coordInsideField(column, row))
 		sum += static_cast<int>(vecField[coordToField(column, row++)]);
-	if (abs(sum) == nFieldSide)
+	if (abs(sum) == fieldSide)
 		return true;
 	return false;
 }
@@ -71,18 +72,18 @@ bool Field::checkFirstDiagonal()
 	int sum = 0;
 	while (row == abs(sum) && coordInsideField(column, row))
 		sum += static_cast<int>(vecField[coordToField(column++, row++)]);
-	if (abs(sum) == nFieldSide)
+	if (abs(sum) == fieldSide)
 		return true;
 	return false;
 }
 
 bool Field::checkSecondDiagonal()
 {
-	int row = 0, column = nFieldSide - 1;
+	int row = 0, column = fieldSide - 1;
 	int sum = 0;
 	while (row == abs(sum) && coordInsideField(column, row))
 		sum += static_cast<int>(vecField[coordToField(column--, row++)]);
-	if (abs(sum) == nFieldSide)
+	if (abs(sum) == fieldSide)
 		return true;
 	return false;
 }

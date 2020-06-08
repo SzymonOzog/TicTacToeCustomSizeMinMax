@@ -4,7 +4,7 @@ int TicTacToe::nFieldSide;
 TEST(FieldTests, HasWonTest)
 {
     int fieldSide = 5;
-    Field f(fieldSide * fieldSide);
+    Field f(fieldSide);
     for (auto p : { player::AI, player::Human })
     {
         for (int i = 0; i < fieldSide; i++)
@@ -47,7 +47,7 @@ TEST(FieldTests, HasWonTest)
 
 TEST(FieldTests, isDrawTest)
 {
-    Field field(3*3);
+    Field field(3);
     field[0] = player::AI;
     field[1] = player::Human;
     field[2] = player::AI;
@@ -65,13 +65,13 @@ TEST(FieldTests, isDrawTest)
 //when provided with an empty field
 TEST(AITests, EmptyFieldTimeElapse)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(5 * 5);
+    std::shared_ptr<Field> field = std::make_shared<Field>(5);
     AI ai(field);
     std::pair<int, int> choice = ai.findBestMove();
 }
 TEST(AITests, WillWin)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
     AI ai(field);
     (*field)[0] = player::AI;
     (*field)[1] = player::AI;
@@ -86,7 +86,7 @@ TEST(AITests, WillWin)
 }
 TEST(AITests, WillBlockPlayerWin)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
     AI ai(field);
     (*field)[0] = player::AI;
     (*field)[1] = player::AI;
@@ -138,7 +138,7 @@ void playEveryBoard(AI ai, std::shared_ptr<Field> f)
 }
 TEST(AcceptanceTest, EveryBoard)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
     AI ai(field);
     playEveryBoard(ai, field);
 }

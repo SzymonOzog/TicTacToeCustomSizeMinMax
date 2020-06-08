@@ -11,13 +11,13 @@ class Field
 {
 public:
 	Field() = delete;
-	Field(int size);
+	Field(int side);
 
 	bool hasWon();	
 	bool hasWon(int i);
 	inline bool isDraw() { return std::find(vecField.begin(), vecField.end(), player::None) == vecField.end(); }
 	void nullify();
-	inline bool canDrawOrWin() { return std::count(vecField.begin(), vecField.end(), player::None) <= vecField.size() + 1 - 2 * nFieldSide; }
+	inline bool canDrawOrWin() { return std::count(vecField.begin(), vecField.end(), player::None) <= vecField.size() + 1 - 2 * fieldSide; }
 
 	player& operator [] (int i) { return vecField[i]; }
 	inline auto begin() { return vecField.begin(); }
@@ -26,11 +26,11 @@ public:
 
 private: 
 	inline bool isOnFirstDiagonal(int i) { return getRow(i) == getColumn(i); }
-	inline bool isOnSecondDiagonal(int i) { return nFieldSide - 1 - getRow(i) == getColumn(i); }
-	inline int getColumn(int i) { return i % nFieldSide; }
-	inline int getRow(int i) { return i / nFieldSide; }
-	inline int coordToField(int x, int y) { return y * nFieldSide + x; }
-	inline bool coordInsideField(int x, int y) { return x >= 0 && x < nFieldSide && y >= 0 && y < nFieldSide; }
+	inline bool isOnSecondDiagonal(int i) { return fieldSide - 1 - getRow(i) == getColumn(i); }
+	inline int getColumn(int i) { return i % fieldSide; }
+	inline int getRow(int i) { return i / fieldSide; }
+	inline int coordToField(int x, int y) { return y * fieldSide + x; }
+	inline bool coordInsideField(int x, int y) { return x >= 0 && x < fieldSide && y >= 0 && y < fieldSide; }
 	bool checkRow(int row);
 	bool checkColumn(int column);
 	bool checkFirstDiagonal();
@@ -38,7 +38,7 @@ private:
 
 
 private:
-	int nFieldSide;
+	int fieldSide;
 	std::vector<player> vecField;
 };
 
