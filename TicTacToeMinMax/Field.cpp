@@ -1,7 +1,8 @@
 #include "Field.h"
 #include <cmath>
-Field::Field(int side) : fieldSide(side)
+Field::Field(int side)
 {
+	fieldSide = side;
 	int size = side * side;
 	vecField.reserve(size);
 	while (size--)

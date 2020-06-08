@@ -24,6 +24,9 @@ public:
 	inline auto end() { return vecField.end(); }
 	inline size_t size() { return vecField.size(); }
 
+public:
+	static int fieldSide;
+
 private: 
 	inline bool isOnFirstDiagonal(int i) { return getRow(i) == getColumn(i); }
 	inline bool isOnSecondDiagonal(int i) { return fieldSide - 1 - getRow(i) == getColumn(i); }
@@ -38,7 +41,6 @@ private:
 
 
 private:
-	int fieldSide;
 	std::vector<player> vecField;
 };
 

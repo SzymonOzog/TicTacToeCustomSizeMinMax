@@ -6,15 +6,13 @@
 #include <utility>
 #include "TicTacToe.h"
 
-int AI::nFieldSide;
 
-TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
+TicTacToe::TicTacToe(int side) : borderSide(2 * side + 1)
 {
-	nFieldSide = fieldSide;
 	createScreen();
 
-	field = std::make_shared<Field>(fieldSide);
-	console = std::make_unique<Console>(nScreenWidth, nScreenHeight);
+	field = std::make_shared<Field>(side);
+	console = std::make_unique<Console>(screenWidth, screenHeight);
 	ai = std::make_unique<AI>(field);
 }
 
@@ -22,12 +20,12 @@ TicTacToe::TicTacToe(int fieldSide) : nBorderSide(2 * fieldSide + 1)
 void TicTacToe::createScreen()
 {
 	//Set screen to be blank
-	for (int i = 0; i < nScreenHeight * nScreenWidth; i++)
+	for (int i = 0; i < screenHeight * screenWidth; i++)
 		screen[i] = ' ';
 	//Create the field
-	for (int i = 0; i < nBorderSide * nBorderSide; i++)
+	for (int i = 0; i < borderSide * borderSide; i++)
 	{
-		COORD c{ i % nBorderSide, i / nBorderSide };
+		COORD c{ i % borderSide, i / borderSide };
 		if (c.X % 2 == 0)
 		{
 			screen[coordToScreen(c)] = '|';
@@ -57,13 +55,13 @@ void TicTacToe::playGame()
 {
 
 	COORD coord = { 0,0 };
-	while (bGame)
+	while (!isGameOver)
 	{
 		console->listen();
 		if (console->isKeyEvent())
 		{
 			if (console->isEscEvent())
-				bGame = false;
+				isGameOver = true;
 		}
 		if (console->isMouseEvent())
 		{
@@ -96,30 +94,30 @@ void TicTacToe::playGame()
 			}
 		}
 		//null terminator for safety
-		screen[nScreenWidth * nScreenHeight - 1] = '\0';
+		screen[screenWidth * screenHeight - 1] = '\0';
 		console->outputScreen(screen);
 	}
 }
 
 void TicTacToe::gameOver(player p)
 {
-	bGame = false;
+	isGameOver = true;
 	switch (p)
 	{
 	case player::None:
-		sFinalMessage = "TIE! Congratulations, you couldn`t win anyway";
+		finalMessage = "TIE! Congratulations, you couldn`t win anyway";
 		break;
 	case player::AI:
-		sFinalMessage = "YOU LOST!";
+		finalMessage = "YOU LOST!";
 		break;
 	case player::Human:
-		sFinalMessage = "WOW, YOU WON! Guess my program is bad, post an issue on my GitHub or contact me";
+		finalMessage = "WOW, YOU WON! Guess my program is bad, post an issue on my GitHub or contact me";
 		break;
 	}
 }
 
 void TicTacToe::printFinalMessage()
 {
-	console->setCursorPosition(0, nBorderSide + 1);
-	std::cout << sFinalMessage << std::endl;
+	console->setCursorPosition(0, borderSide + 1);
+	std::cout << finalMessage << std::endl;
 }

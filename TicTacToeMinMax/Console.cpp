@@ -1,7 +1,7 @@
 #include "Console.h"
 #include <string>
 
-Console::Console(int width, int height) : nScreenWidth(width), nScreenHeight(height) 
+Console::Console(int width, int height) : screenWidth(width), screenHeight(height) 
 {
 	hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	hConsoleIn = GetStdHandle(STD_INPUT_HANDLE);
@@ -18,7 +18,7 @@ void Console::setConsoleProperties()
 
 void Console::setWindowSize()
 {
-	std::string sConsoleProps = "MODE CON COLS=" + std::to_string(nScreenWidth) + " LINES=" + std::to_string(nScreenHeight);
+	std::string sConsoleProps = "MODE CON COLS=" + std::to_string(screenWidth) + " LINES=" + std::to_string(screenHeight);
 	system(sConsoleProps.c_str());
 }
 

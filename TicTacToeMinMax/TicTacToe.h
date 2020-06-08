@@ -9,17 +9,16 @@ class TicTacToe
 {
 public: 
 	TicTacToe() = delete;
-	TicTacToe(int fieldSide);
+	TicTacToe(int side);
 	~TicTacToe();
 	
 private:
-	static const int nScreenWidth = 80;
-	static const int nScreenHeight = 30;
-	static int nFieldSide;
-	const int nBorderSide;
-	bool bGame = true;
-	std::string sFinalMessage;
-	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
+	const int screenWidth = 80;
+	const int screenHeight = 30;
+	const int borderSide;
+	bool isGameOver = false;
+	std::string finalMessage;
+	wchar_t* screen = new wchar_t[screenWidth * screenHeight];
 	std::shared_ptr<Field> field;
 	std::unique_ptr<Console> console;
 	std::unique_ptr<AI> ai;
@@ -27,10 +26,10 @@ private:
 public:
 	void start();
 private:
-	inline bool isViableCoord(COORD coord) { return (coord.X < nBorderSide && coord.Y < nBorderSide && screen[coord.Y * nScreenWidth + coord.X] == ' '); }
-	inline int coordToScreen(COORD c) { return c.Y * nScreenWidth + c.X; }
-	inline int coordToField(COORD c) { return c.Y / 2 * nFieldSide + c.X / 2; }
-	inline COORD fieldToCoord(int p) { short x = p % nFieldSide; short y = p / nFieldSide; return { x * 2 + 1, y * 2 + 1 }; }
+	inline bool isViableCoord(COORD coord) { return (coord.X < borderSide && coord.Y < borderSide && screen[coord.Y * screenWidth + coord.X] == ' '); }
+	inline int coordToScreen(COORD c) { return c.Y * screenWidth + c.X; }
+	inline int coordToField(COORD c) { return c.Y / 2 * Field::fieldSide + c.X / 2; }
+	inline COORD fieldToCoord(int p) { short x = p % Field::fieldSide; short y = p / Field::fieldSide; return { x * 2 + 1, y * 2 + 1 }; }
 	inline int fieldToScreen(int p) { return coordToScreen(fieldToCoord(p)); }
 	void createScreen();
 	void printFinalMessage();

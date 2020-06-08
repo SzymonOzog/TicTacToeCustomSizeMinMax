@@ -2,7 +2,6 @@
 #include <iostream>
 #include <regex>
 
-int TicTacToe::nFieldSide;
 const std::string rules = R"(
 Welcome to the TicTacToe game where you will be competing against AI
 1. You play as X

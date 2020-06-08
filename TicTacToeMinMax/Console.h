@@ -7,8 +7,8 @@ public:
 	Console() = delete;
 	Console(int width, int height);
 private:
-	const int nScreenWidth;
-	const int nScreenHeight;
+	const int screenWidth;
+	const int screenHeight;
 	HANDLE hConsoleOut = nullptr;
 	HANDLE hConsoleIn = nullptr;
 	DWORD dwEvents = 0;
@@ -21,7 +21,7 @@ public:
 	inline bool isKeyEvent() { return Input.EventType == KEY_EVENT; }
 	inline bool isEscEvent() { return Input.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE; }
 	inline COORD getMousePosition() { return Input.Event.MouseEvent.dwMousePosition; }
-	inline void outputScreen(wchar_t* screen) { WriteConsoleOutputCharacter(hConsoleOut, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten); }
+	inline void outputScreen(wchar_t* screen) { WriteConsoleOutputCharacter(hConsoleOut, screen, screenWidth * screenHeight, { 0,0 }, &dwBytesWritten); }
 	inline void setCursorPosition(short x, short y) { SetConsoleCursorPosition(hConsoleOut, { x, y }); }
 private:
 	void setConsoleProperties();
