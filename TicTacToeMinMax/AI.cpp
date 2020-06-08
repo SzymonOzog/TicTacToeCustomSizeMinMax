@@ -8,6 +8,8 @@ std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestS
 		else if (field->isDraw())
 			return { 0, -1 };
 	}
+	if (reverseDepth == 0)
+		return { 0, -1 };
 	bestScoreMove.first = (currentPlayer == player::AI ? INT_MIN : INT_MAX);
 	for (int i = 0; i < field->size(); i++)
 	{

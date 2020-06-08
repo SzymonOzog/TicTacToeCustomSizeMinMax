@@ -65,7 +65,7 @@ TEST(FieldTests, isDrawTest)
 //when provided with an empty field
 TEST(AITests, EmptyFieldTimeElapse)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
+    std::shared_ptr<Field> field = std::make_shared<Field>(5 * 5);
     AI ai(field);
     std::pair<int, int> choice = ai.findBestMove();
 }
@@ -138,7 +138,7 @@ void playEveryBoard(AI ai, std::shared_ptr<Field> f)
 }
 TEST(AcceptanceTest, EveryBoard)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(3 * 3);
+    std::shared_ptr<Field> field = std::make_shared<Field>(4 * 4);
     AI ai(field);
     playEveryBoard(ai, field);
 }
