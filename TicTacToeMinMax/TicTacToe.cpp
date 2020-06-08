@@ -6,6 +6,7 @@
 #include <utility>
 #include "TicTacToe.h"
 
+int Field::fieldSide;
 
 TicTacToe::TicTacToe(int side) : borderSide(2 * side + 1)
 {

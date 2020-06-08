@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include "TicTacToe.h"
-int Field::fieldSide;
 TEST(FieldTests, HasWonTest)
 {
     int fieldSide = 5;
