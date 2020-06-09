@@ -8,6 +8,16 @@ Field::Field(int side)
 	while (size--)
 		vecField.emplace_back(player::None);
 }
+
+bool Field::isCoordWorthChecking(int coord)
+{
+	int row = getRow(coord);
+	int column = getColumn(coord);
+	return isCoordTaken(row - 1, column - 1) || isCoordTaken(row, column - 1) || isCoordTaken(row + 1, column - 1)
+		|| isCoordTaken(row - 1, column) || isCoordTaken(row + 1, column)
+		|| isCoordTaken(row - 1, column + 1) || isCoordTaken(row, column + 1) || isCoordTaken(row + 1, column + 1);
+}
+
 bool Field::hasWon()
 {
 	for (int i = 0; i < fieldSide; i++)
@@ -23,6 +33,7 @@ bool Field::hasWon()
 		return true;
 	return false;
 }
+
 bool Field::hasWon(int i)
 {
 

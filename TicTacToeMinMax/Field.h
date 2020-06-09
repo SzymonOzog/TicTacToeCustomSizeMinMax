@@ -13,12 +13,12 @@ public:
 	Field() = delete;
 	Field(int side);
 
+	bool isCoordWorthChecking(int coord);
 	bool hasWon();	
 	bool hasWon(int i);
 	inline bool isDraw() { return std::find(vecField.begin(), vecField.end(), player::None) == vecField.end(); }
 	void nullify();
 	inline bool canDrawOrWin() { return std::count(vecField.begin(), vecField.end(), player::None) <= vecField.size() + 1 - 2 * fieldSide; }
-
 	player& operator [] (int i) { return vecField[i]; }
 	inline auto begin() { return vecField.begin(); }
 	inline auto end() { return vecField.end(); }
@@ -28,6 +28,7 @@ public:
 	static int fieldSide;
 
 private: 
+	inline bool isCoordTaken(int row, int column) { return vecField[coordToField(column, row)] != player::None; }
 	inline bool isOnFirstDiagonal(int i) { return getRow(i) == getColumn(i); }
 	inline bool isOnSecondDiagonal(int i) { return fieldSide - 1 - getRow(i) == getColumn(i); }
 	inline int getColumn(int i) { return i % fieldSide; }
