@@ -68,6 +68,20 @@ TEST(AITests, EmptyFieldTimeElapse)
     AI ai(field);
     std::pair<int, int> choice = ai.findBestMove();
 }
+TEST(AITests, lastNodeIsBestMoveTimeElapse)
+{
+    std::shared_ptr<Field> field = std::make_shared<Field>(5);
+    AI ai(field);
+    (*field)[0] = player::Human;
+    (*field)[6] = player::Human;
+    (*field)[12] = player::Human;
+    (*field)[18] = player::Human;
+    (*field)[1] = player::AI;
+    (*field)[2] = player::AI;
+    (*field)[3] = player::AI;
+
+    std::pair<int, int> choice = ai.findBestMove();
+}
 TEST(AITests, WillWin)
 {
     std::shared_ptr<Field> field = std::make_shared<Field>(4);
