@@ -14,16 +14,14 @@ TEST(FieldTests, HasWonTest)
             f[1 + i * fieldSide] = p;
             f[2 + i * fieldSide] = p;
             f[3 + i * fieldSide] = p;
-            f[4 + i * fieldSide] = p;
-            EXPECT_EQ(f.hasWon(), true);
+            EXPECT_TRUE(f.hasWon());
            // check veritically
             f.nullify();
             f[0 + i] = p;
             f[5 + i] = p;
             f[10 + i] = p;
             f[15 + i] = p;
-            f[20 + i] = p;
-            EXPECT_EQ(f.hasWon(), true);
+            EXPECT_TRUE(f.hasWon());
         }
         //check diagonally
         f.nullify();
@@ -31,19 +29,55 @@ TEST(FieldTests, HasWonTest)
         f[6] = p;
         f[12] = p;
         f[18] = p;
-        f[24] = p;
-        EXPECT_EQ(f.hasWon(), true);
+        EXPECT_TRUE(f.hasWon());
         //check second diagonal
         f.nullify();
         f[4] = p;
         f[8] = p;
         f[12] = p;
         f[16] = p;
-        f[20] = p;
-        EXPECT_EQ(f.hasWon(), true);
+        EXPECT_TRUE(f.hasWon());
     }
 }
-
+TEST(FieldsTest, SeparatedFour)
+{
+    int fieldSide = 5;
+    Field f(fieldSide);
+    for (auto p : { player::AI, player::Human })
+    {
+        for (int i = 0; i < fieldSide; i++)
+        {
+            //check horizontally
+            f.nullify();
+            f[0 + i * fieldSide] = p;
+            f[1 + i * fieldSide] = p;
+            f[2 + i * fieldSide] = p;
+            f[4 + i * fieldSide] = p;
+            EXPECT_TRUE(!f.hasWon());
+            // check veritically
+            f.nullify();
+            f[0 + i] = p;
+            f[5 + i] = p;
+            f[10 + i] = p;
+            f[20 + i] = p;
+            EXPECT_TRUE(!f.hasWon());
+        }
+        //check diagonally
+        f.nullify();
+        f[0] = p;
+        f[6] = p;
+        f[12] = p;
+        f[24] = p;
+        EXPECT_TRUE(!f.hasWon());
+        //check second diagonal
+        f.nullify();
+        f[4] = p;
+        f[8] = p;
+        f[12] = p;
+        f[20] = p;
+        EXPECT_TRUE(!f.hasWon());
+    }
+}
 TEST(FieldTests, isDrawTest)
 {
     Field field(3);
@@ -72,19 +106,17 @@ TEST(AITests, lastNodeIsBestMoveTimeElapse)
 {
     std::shared_ptr<Field> field = std::make_shared<Field>(5);
     AI ai(field);
-    (*field)[0] = player::Human;
+    (*field)[0] = player::AI;
     (*field)[6] = player::Human;
     (*field)[12] = player::Human;
     (*field)[18] = player::Human;
     (*field)[1] = player::AI;
-    (*field)[2] = player::AI;
-    (*field)[3] = player::AI;
 
     std::pair<int, int> choice = ai.findBestMove();
 }
 TEST(AITests, WillWin)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(4);
+    std::shared_ptr<Field> field = std::make_shared<Field>(5);
     AI ai(field);
     (*field)[0] = player::AI;
     (*field)[1] = player::AI;
@@ -107,7 +139,6 @@ TEST(AITests, WillBlockPlayerWin)
     (*field)[4] = player::Human;
     (*field)[5] = player::Human;
     (*field)[6] = player::Human;
-    (*field)[8] = player::Human;
     std::pair<int, int> choice = ai.findBestMove();
     EXPECT_EQ(choice.second, 7);
 }
@@ -151,7 +182,7 @@ void playEveryBoard(AI ai, std::shared_ptr<Field> f)
 }
 TEST(AcceptanceTest, EveryBoard)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(4);
+    std::shared_ptr<Field> field = std::make_shared<Field>(3);
     AI ai(field);
     playEveryBoard(ai, field);
 }
