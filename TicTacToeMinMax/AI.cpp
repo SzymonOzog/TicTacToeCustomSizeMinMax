@@ -13,7 +13,7 @@ std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestS
 	bestScoreMove.first = (currentPlayer == player::AI ? INT_MIN : INT_MAX);
 	for (int i = 0; i < field->size(); i++)
 	{
-		if ((*field)[i] == player::None /*&& field->isCoordWorthChecking(i)*/)
+		if ((*field)[i] == player::None && field->isCoordWorthChecking(i))
 		{
 			(*field)[i] = currentPlayer;
 			int score = findBestMove(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i).first;

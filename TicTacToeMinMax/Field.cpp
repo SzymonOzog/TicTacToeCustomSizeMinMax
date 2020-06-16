@@ -2,6 +2,7 @@
 #include <cmath>
 Field::Field(int side)
 {
+	pointsNeededToWin = side < 4 ? side : 4;
 	fieldSide = side;
 	int size = side * side;
 	vecField.reserve(size);
@@ -27,10 +28,12 @@ bool Field::hasWon()
 		if (checkColumn(i))
 			return true;
 	}
-	if (checkFirstDiagonal())
-		return true;
-	if (checkSecondDiagonal())
-		return true;
+	for(auto coord : allForwardDiagonals())
+		if (checkFirstDiagonal(coord))
+			return true;
+	for (auto coord : allBackwardDiagonals())
+		if (checkSecondDiagonal(coord))
+			return true;
 	return false;
 }
 
@@ -41,12 +44,12 @@ bool Field::hasWon(int i)
 		return true;
 	if (checkColumn(getColumn(i)))
 		return true;
-	if(isOnFirstDiagonal(i))
-		if (checkFirstDiagonal())
-			return true;
-	if(isOnSecondDiagonal(i))
-		if (checkSecondDiagonal())
-			return true;
+	std::pair<int, int> coord = getForwardDiagonalCoord(i);
+	if (checkFirstDiagonal(coord))
+		return true;
+	coord = getBackwardDiagonalCoord(i);
+	if (checkSecondDiagonal(coord))
+		return true;
 	return false;
 }
 
@@ -59,43 +62,91 @@ void Field::nullify()
 bool Field::checkRow(int row)
 {
 	int column = 0;
-	int sum = 0;
-	while (column == abs(sum) && coordInsideField(column, row))
-		sum += static_cast<int>(vecField[coordToField(column++, row)]);
-	if (abs(sum) == fieldSide)
-		return true;
+	int points = 0;
+	player currentPlayer = vecField[coordToField(column, row)];
+	while (fieldSide - column + abs(points) >= pointsNeededToWin && coordInsideField(column, row))
+	{
+		if (vecField[coordToField(column, row)] == currentPlayer)
+			points += static_cast<int>(vecField[coordToField(column, row)]);
+		else
+			points = static_cast<int>(vecField[coordToField(column, row)]);
+		if (abs(points) == pointsNeededToWin)
+			return true;
+		currentPlayer = vecField[coordToField(column++, row)];
+	}
 	return false;
 }
 
 bool Field::checkColumn(int column)
 {
 	int row = 0;
-	int sum = 0;
-	while (row == abs(sum) && coordInsideField(column, row))
-		sum += static_cast<int>(vecField[coordToField(column, row++)]);
-	if (abs(sum) == fieldSide)
-		return true;
+	int points = 0;
+	player currentPlayer = vecField[coordToField(column, row)];
+	while (fieldSide - row + abs(points) >= pointsNeededToWin && coordInsideField(column, row))
+	{
+		if (vecField[coordToField(column, row)] == currentPlayer)
+			points += static_cast<int>(vecField[coordToField(column, row)]);
+		else
+			points = static_cast<int>(vecField[coordToField(column, row)]);
+		if (abs(points) == pointsNeededToWin)
+			return true;
+		currentPlayer = vecField[coordToField(column, row++)];
+	}
 	return false;
 }
 
-bool Field::checkFirstDiagonal()
+bool Field::checkFirstDiagonal(std::pair<int, int> coord)
 {
+	int column = coord.first, row = coord.second;
+	int points = 0;
+	player currentPlayer = vecField[coordToField(column, row)];
+	while (fieldSide - row + abs(points) >= pointsNeededToWin && coordInsideField(column, row))
+	{
+		if (vecField[coordToField(column, row)] == currentPlayer)
+			points += static_cast<int>(vecField[coordToField(column, row)]);
+		else
+			points = static_cast<int>(vecField[coordToField(column, row)]);
+		if (abs(points) == pointsNeededToWin)
+			return true;
+		currentPlayer = vecField[coordToField(column++, row++)];
+	}
+	return false;
+}
+
+bool Field::checkSecondDiagonal(std::pair<int, int> coord)
+{
+	int column = coord.first, row = coord.second;
+	int points = 0;
+	player currentPlayer = vecField[coordToField(column, row)];
+	while (fieldSide - row + abs(points) >= pointsNeededToWin && coordInsideField(column, row))
+	{
+		if (vecField[coordToField(column, row)] == currentPlayer)
+			points += static_cast<int>(vecField[coordToField(column, row)]);
+		else
+			points = static_cast<int>(vecField[coordToField(column, row)]);
+		if (abs(points) == pointsNeededToWin)
+			return true;
+		currentPlayer = vecField[coordToField(column--, row++)];
+	}
+	return false;
+}
+
+std::vector<std::pair<int, int>> Field::allForwardDiagonals()
+{
+	std::vector<std::pair<int, int>> forwardDiagonals;
 	int row = 0, column = 0;
-	int sum = 0;
-	while (row == abs(sum) && coordInsideField(column, row))
-		sum += static_cast<int>(vecField[coordToField(column++, row++)]);
-	if (abs(sum) == fieldSide)
-		return true;
-	return false;
+	while (fieldSide - row >= pointsNeededToWin)
+		forwardDiagonals.push_back({ column, row++ });
+	row = 0;
+	while (fieldSide - column >= pointsNeededToWin)
+		forwardDiagonals.push_back({ column++, row });
+	return forwardDiagonals;
 }
 
-bool Field::checkSecondDiagonal()
+std::vector<std::pair<int, int>> Field::allBackwardDiagonals()
 {
-	int row = 0, column = fieldSide - 1;
-	int sum = 0;
-	while (row == abs(sum) && coordInsideField(column, row))
-		sum += static_cast<int>(vecField[coordToField(column--, row++)]);
-	if (abs(sum) == fieldSide)
-		return true;
-	return false;
+	std::vector<std::pair<int, int>> backwardDiagonals = allForwardDiagonals();
+	for (auto& coord : backwardDiagonals)
+		coord.first = fieldSide - 1 - coord.first;
+	return backwardDiagonals;
 }
