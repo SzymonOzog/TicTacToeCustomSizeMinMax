@@ -14,9 +14,11 @@ bool Field::isCoordWorthChecking(int coord)
 {
 	int row = getRow(coord);
 	int column = getColumn(coord);
-	return isCoordTaken(row - 1, column - 1) || isCoordTaken(row, column - 1) || isCoordTaken(row + 1, column - 1)
-		|| isCoordTaken(row - 1, column) || isCoordTaken(row + 1, column)
-		|| isCoordTaken(row - 1, column + 1) || isCoordTaken(row, column + 1) || isCoordTaken(row + 1, column + 1);
+	for (int y = row - 2; y <= row + 2; y++)
+		for (int x = column - 2; x <= column + 2; x++)
+			if (isCoordTaken(y, x))
+				return true;
+	return false;
 }
 
 bool Field::hasWon()
