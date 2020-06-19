@@ -94,12 +94,14 @@ TEST(FieldTests, isDrawTest)
     field[0] = player::None;
     EXPECT_TRUE(!field.isDraw());
 }
+
 //Not really a test, just checking how long will the AI think 
 //when provided with an empty field
 TEST(AITests, EmptyFieldTimeElapse)
 {
     std::shared_ptr<Field> field = std::make_shared<Field>(5);
     AI ai(field);
+    (*field)[field->size() / 2] = player::Human;
     std::pair<int, int> choice = ai.findBestMove();
 }
 TEST(AITests, lastNodeIsBestMoveTimeElapse)
@@ -143,6 +145,20 @@ TEST(AITests, WillBlockPlayerWin)
     EXPECT_EQ(choice.second, 7);
 }
 
+TEST(TranspositionTableTest, RecalculateHash)
+{
+    std::shared_ptr<Field> field = std::make_shared<Field>(5);
+    TranspositionTable ttable(field);
+    (*field)[0] = player::AI;
+    (*field)[2] = player::AI;
+    (*field)[3] = player::Human;
+    (*field)[6] = player::Human;
+    ttable.calculateHash();
+    (*field)[7] = player::Human;
+    EXPECT_EQ(ttable.recalculateHash(7), ttable.calculateHash());
+
+}
+
 void playEveryBoard(AI ai, std::shared_ptr<Field> f)
 {
     int bestMove = 0;
@@ -182,7 +198,7 @@ void playEveryBoard(AI ai, std::shared_ptr<Field> f)
 }
 TEST(AcceptanceTest, EveryBoard)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(3);
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
     AI ai(field);
     playEveryBoard(ai, field);
 }
