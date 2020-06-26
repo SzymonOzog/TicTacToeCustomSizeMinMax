@@ -36,7 +36,8 @@ project "TicTacToeTest"
 	"TicTacToeMinMax/TicTacToe.h", "TicTacToeMinMax/TicTacToe.cpp", 
 	"TicTacToeMinMax/Field.h", "TicTacToeMinMax/Field.cpp" , 
 	"TicTacToeMinMax/AI.h", "TicTacToeMinMax/AI.cpp", 
-	"TicTacToeMinMax/Console.h", "TicTacToeMinMax/Console.cpp"}
+	"TicTacToeMinMax/Console.h", "TicTacToeMinMax/Console.cpp",
+	"TicTacToeMinMax/TranspositionTable.h", "TicTacToeMinMax/TranspositionTable.cpp"}
 	
 	cppdialect "C++17"
 	systemversion "latest"
