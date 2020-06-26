@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "TicTacToe.h"
+#include "TranspositionTable.h"
 TEST(FieldTests, HasWonTest)
 {
     int fieldSide = 5;
@@ -102,7 +103,7 @@ TEST(AITests, EmptyFieldTimeElapse)
     std::shared_ptr<Field> field = std::make_shared<Field>(5);
     AI ai(field);
     (*field)[field->size() / 2] = player::Human;
-    std::pair<int, int> choice = ai.findBestMove();
+    int choice = ai.findBestMove();
 }
 TEST(AITests, lastNodeIsBestMoveTimeElapse)
 {
@@ -114,7 +115,8 @@ TEST(AITests, lastNodeIsBestMoveTimeElapse)
     (*field)[18] = player::Human;
     (*field)[1] = player::AI;
 
-    std::pair<int, int> choice = ai.findBestMove();
+    int choice = ai.findBestMove();
+    EXPECT_EQ(choice, 24);
 }
 TEST(AITests, WillWin)
 {
@@ -128,8 +130,8 @@ TEST(AITests, WillWin)
     (*field)[7] = player::Human;
     (*field)[15] = player::Human;
 
-    std::pair<int, int> choice = ai.findBestMove();
-    EXPECT_EQ(choice.second, 3);
+    int choice = ai.findBestMove();
+    EXPECT_EQ(choice, 3);
 }
 TEST(AITests, WillBlockPlayerWin)
 {
@@ -141,8 +143,8 @@ TEST(AITests, WillBlockPlayerWin)
     (*field)[4] = player::Human;
     (*field)[5] = player::Human;
     (*field)[6] = player::Human;
-    std::pair<int, int> choice = ai.findBestMove();
-    EXPECT_EQ(choice.second, 7);
+    int choice = ai.findBestMove();
+    EXPECT_EQ(choice, 7);
 }
 
 TEST(TranspositionTableTest, RecalculateHash)
@@ -153,13 +155,12 @@ TEST(TranspositionTableTest, RecalculateHash)
     (*field)[2] = player::AI;
     (*field)[3] = player::Human;
     (*field)[6] = player::Human;
-    ttable.calculateHash();
+    auto hash = ttable.calculateHash();
     (*field)[7] = player::Human;
-    EXPECT_EQ(ttable.recalculateHash(7), ttable.calculateHash());
-
+    EXPECT_EQ(ttable.recalculateHash(hash, 7), ttable.calculateHash());
 }
 
-void playEveryBoard(AI ai, std::shared_ptr<Field> f)
+void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
 {
     int bestMove = 0;
     auto it = f->begin();
@@ -173,7 +174,7 @@ void playEveryBoard(AI ai, std::shared_ptr<Field> f)
             std::cout << std::endl;
         EXPECT_TRUE(!f->hasWon());
 
-        bestMove = ai.findBestMove().second;
+        bestMove = ai.findBestMove();
         if (bestMove == -1)//TIE
         {
             *it = player::None;
@@ -198,7 +199,7 @@ void playEveryBoard(AI ai, std::shared_ptr<Field> f)
 }
 TEST(AcceptanceTest, EveryBoard)
 {
-    std::shared_ptr<Field> field = std::make_shared<Field>(4);
+    std::shared_ptr<Field> field = std::make_shared<Field>(3);
     AI ai(field);
     playEveryBoard(ai, field);
 }

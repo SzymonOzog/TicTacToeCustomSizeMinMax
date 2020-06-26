@@ -78,7 +78,7 @@ void TicTacToe::playGame()
 						gameOver(player::Human);
 						break;
 					}
-					int aiMove = ai->findBestMove().second;
+					int aiMove = ai->findBestMove();
 					if (aiMove == -1)
 					{
 						gameOver(player::None);

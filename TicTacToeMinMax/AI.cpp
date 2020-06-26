@@ -1,12 +1,21 @@
 #include "AI.h"
-std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestScoreMove, player currentPlayer, int alpha, int beta, int lastPlay)
+int AI::findBestMove()
 {
-	if (reverseDepth == 0)
+	hash = tTable->calculateHash();
+	int bestMove = minMax().second;
+	return bestMove;
+}
+
+std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMove, player currentPlayer, int alpha, int beta, int lastPlay)
+{
+	if ((*tTable)[hash] != tTable->nullEntry)
+		return (*tTable)[hash].scoreMove;
+	else if (reverseDepth == 0)
 		return { 0, -1 };
 	else if (field->canDrawOrWin() && lastPlay != -1)
 	{
 		if (field->hasWon(lastPlay))
-			return { field->getEmptyCoords() * static_cast<int>(currentPlayer), -1 };
+			return { (field->getEmptyCoords() + 1) * static_cast<int>(currentPlayer), -1 };
 		else if (field->isDraw())
 			return { 0, -1 };
 	}
@@ -16,7 +25,8 @@ std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestS
 		if ((*field)[i] == player::None && field->isCoordWorthChecking(i))
 		{
 			(*field)[i] = currentPlayer;
-			int score = findBestMove(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i).first;
+			hash = tTable->recalculateHash(hash, i);
+			int score = minMax(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i).first;
 			if (currentPlayer == player::AI)
 			{
 				alpha = std::max(alpha, score);
@@ -29,10 +39,12 @@ std::pair<int, int> AI::findBestMove(int reverseDepth, std::pair<int, int> bestS
 				if (bestScoreMove.first > score)
 					bestScoreMove = { score, i };
 			}
+			hash = tTable->recalculateHash(hash, i);
 			(*field)[i] = player::None;
 			if (beta <= alpha)
 				break;
 		}
 	}
+	tTable->placeEntry(hash, bestScoreMove);
 	return bestScoreMove;
 }
