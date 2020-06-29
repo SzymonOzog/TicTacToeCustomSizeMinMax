@@ -79,7 +79,7 @@ TEST(FieldsTest, SeparatedFour)
         EXPECT_TRUE(!f.hasWon());
     }
 }
-TEST(FieldTests, isDrawTest)
+TEST(FieldTest, isDrawTest)
 {
     Field field(3);
     field[0] = player::AI;
@@ -158,6 +158,17 @@ TEST(TranspositionTableTest, RecalculateHash)
     auto hash = ttable.calculateHash();
     (*field)[7] = player::Human;
     EXPECT_EQ(ttable.recalculateHash(hash, 7), ttable.calculateHash());
+}
+
+TEST(TranspositionTableTest, EntryOperator)
+{
+    std::pair <int, int> scoreMove = { 0,0 };
+    unsigned long long hash = 1;
+    Entry e1 = Entry(scoreMove, hash);
+    Entry e2 = Entry(scoreMove, hash);
+    EXPECT_TRUE(e1 == e2);
+    e2.hash = 2;
+    EXPECT_TRUE(e1 != e2);
 }
 
 void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
