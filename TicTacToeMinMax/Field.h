@@ -47,8 +47,6 @@ private:
 	std::vector<std::pair<int, int>> allForwardDiagonals();
 	std::vector<std::pair<int, int>> allBackwardDiagonals();
 
-
-
 private:
 	std::vector<player> vecField;
 	int pointsNeededToWin;

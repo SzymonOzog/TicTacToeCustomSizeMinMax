@@ -3,7 +3,7 @@
 #include <memory>
 struct Entry
 {
-	Entry() : scoreMove({ 0, 2 }), hash(0) {}
+	Entry() : scoreMove({ 0, -2 }), hash(0) {}
 	Entry(std::pair<int, int> _scoreMove, unsigned long long _hash) : scoreMove(_scoreMove), hash(_hash) {}
 	std::pair<int, int> scoreMove;
 	unsigned long long hash;
@@ -25,13 +25,13 @@ public:
 	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove);
 public:
 	Entry nullEntry;
+	unsigned int collisions = 0;
 private:
-	int getKeyIndex(int i) { int index = 2 * i; index += (*field)[i] == player::AI ? 1 : 0; return index; }
+	inline int getKeyIndex(int i) { int index = 2 * i; index += (*field)[i] == player::AI ? 1 : 0; return index; }
 private:
 	std::shared_ptr<Field> field;
 	std::vector<unsigned long long> zobristKeys;
 	std::vector<Entry> entries;
-	int bigPrimeNumber = 29030401;
-
+	unsigned long long bigPrimeNumber = 29030401;
 };
 

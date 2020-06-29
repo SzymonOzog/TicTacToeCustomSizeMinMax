@@ -1,4 +1,5 @@
 #include "AI.h"
+#include <iostream>
 int AI::findBestMove()
 {
 	hash = tTable->calculateHash();
@@ -26,25 +27,30 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 		{
 			(*field)[i] = currentPlayer;
 			hash = tTable->recalculateHash(hash, i);
-			int score = minMax(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i).first;
+			std::pair<int, int> scoreMove = minMax(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i);
 			if (currentPlayer == player::AI)
 			{
-				alpha = std::max(alpha, score);
-				if (bestScoreMove.first < score)
-					bestScoreMove = { score, i };
+				alpha = std::max(alpha, scoreMove.first);
+				if (bestScoreMove.first < scoreMove.first)
+					bestScoreMove = { scoreMove.first, i };
 			}
 			else
 			{
-				beta = std::min(beta, score);
-				if (bestScoreMove.first > score)
-					bestScoreMove = { score, i };
+				beta = std::min(beta, scoreMove.first);
+				if (bestScoreMove.first > scoreMove.first)
+					bestScoreMove = { scoreMove.first, i };
 			}
+			tTable->placeEntry(hash, scoreMove);
 			hash = tTable->recalculateHash(hash, i);
 			(*field)[i] = player::None;
 			if (beta <= alpha)
 				break;
 		}
 	}
-	tTable->placeEntry(hash, bestScoreMove);
 	return bestScoreMove;
+}
+
+void AI::printCollisions()
+{
+	std::cout << tTable->collisions << std::endl;
 }

@@ -40,7 +40,7 @@ TEST(FieldTests, HasWonTest)
         EXPECT_TRUE(f.hasWon());
     }
 }
-TEST(FieldsTest, SeparatedFour)
+TEST(FieldTests, SeparatedFour)
 {
     int fieldSide = 5;
     Field f(fieldSide);
@@ -79,7 +79,7 @@ TEST(FieldsTest, SeparatedFour)
         EXPECT_TRUE(!f.hasWon());
     }
 }
-TEST(FieldTest, isDrawTest)
+TEST(FieldTests, isDrawTest)
 {
     Field field(3);
     field[0] = player::AI;
@@ -223,4 +223,5 @@ TEST(AcceptanceTest, EveryBoard)
     std::shared_ptr<Field> field = std::make_shared<Field>(3);
     AI ai(field);
     playEveryBoard(ai, field);
+    ai.printCollisions();
 }

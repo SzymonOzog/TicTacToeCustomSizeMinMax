@@ -30,8 +30,18 @@ unsigned long long TranspositionTable::calculateHash()
 
 void TranspositionTable::placeEntry(unsigned long long hash, std::pair<int, int> scoreMove)
 {
-	Entry e(scoreMove, hash);
-	entries[hash % entries.size()] = e;
+	Entry& e = entries[hash % entries.size()];
+	if (e == nullEntry)
+	{
+		e.hash = hash;
+		e.scoreMove = scoreMove;
+	}
+	else if (e.hash != hash)
+	{
+		e.hash = hash;
+		e.scoreMove = scoreMove;
+		++collisions;
+	}
 }
 
 
