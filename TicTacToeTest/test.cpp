@@ -171,6 +171,16 @@ TEST(TranspositionTableTest, EntryOperator)
     EXPECT_TRUE(e1 != e2);
 }
 
+TEST(TranspositionTableTest, PlaceEntry)
+{
+    std::shared_ptr<Field> field = std::make_shared<Field>(3);
+    TranspositionTable ttable(field);
+    (*field)[0] = player::Human;
+    int hash = ttable.calculateHash();
+    ttable.placeEntry(hash, { 1,1 });
+    Entry e = Entry({ 1,1 }, hash);
+    EXPECT_TRUE(ttable[hash] == e);
+}
 void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
 {
     int bestMove = 0;
