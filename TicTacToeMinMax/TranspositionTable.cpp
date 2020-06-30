@@ -19,7 +19,7 @@ TranspositionTable::TranspositionTable(std::shared_ptr<Field> f) : field(f)
 		entries.emplace_back(nullEntry);
 }
 
-unsigned long long TranspositionTable::calculateHash()
+unsigned long long TranspositionTable::recalculateHash()
 {
 	unsigned long long hash = 0;
 	for (int i = 0; i < field->size(); i++)

@@ -155,9 +155,9 @@ TEST(TranspositionTableTest, RecalculateHash)
     (*field)[2] = player::AI;
     (*field)[3] = player::Human;
     (*field)[6] = player::Human;
-    auto hash = ttable.calculateHash();
+    auto hash = ttable.recalculateHash();
     (*field)[7] = player::Human;
-    EXPECT_EQ(ttable.recalculateHash(hash, 7), ttable.calculateHash());
+    EXPECT_EQ(ttable.calculateHash(hash, 7), ttable.recalculateHash());
 }
 
 TEST(TranspositionTableTest, EntryOperator)
@@ -176,10 +176,11 @@ TEST(TranspositionTableTest, PlaceEntry)
     std::shared_ptr<Field> field = std::make_shared<Field>(3);
     TranspositionTable ttable(field);
     (*field)[0] = player::Human;
-    int hash = ttable.calculateHash();
+    int hash = ttable.recalculateHash();
     ttable.placeEntry(hash, { 1,1 });
     Entry e = Entry({ 1,1 }, hash);
     EXPECT_TRUE(ttable[hash] == e);
+    EXPECT_TRUE(ttable[hash] != ttable.nullEntry);
 }
 void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
 {

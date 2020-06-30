@@ -17,8 +17,8 @@ public:
 	TranspositionTable(std::shared_ptr<Field> f);
 
 
-	unsigned long long calculateHash();
-	inline unsigned long long recalculateHash(unsigned long long hash, int index) { return hash ^ zobristKeys[getKeyIndex(index)]; }
+	unsigned long long recalculateHash();
+	inline unsigned long long calculateHash(unsigned long long hash, int index) { return hash ^ zobristKeys[getKeyIndex(index)]; }
 	Entry& operator[](int h) { 
 		if (entries[h % entries.size()].hash == h) return entries[h % entries.size()]; 
 		else return nullEntry; }

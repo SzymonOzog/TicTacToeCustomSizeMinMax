@@ -2,7 +2,7 @@
 #include <iostream>
 int AI::findBestMove()
 {
-	hash = tTable->calculateHash();
+	hash = tTable->recalculateHash();
 	int bestMove = minMax().second;
 	return bestMove;
 }
@@ -26,7 +26,7 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 		if ((*field)[i] == player::None && field->isCoordWorthChecking(i))
 		{
 			(*field)[i] = currentPlayer;
-			hash = tTable->recalculateHash(hash, i);
+			hash = tTable->calculateHash(hash, i);
 			std::pair<int, int> scoreMove = minMax(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i);
 			if (currentPlayer == player::AI)
 			{
@@ -41,7 +41,7 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 					bestScoreMove = { scoreMove.first, i };
 			}
 			tTable->placeEntry(hash, scoreMove);
-			hash = tTable->recalculateHash(hash, i);
+			hash = tTable->calculateHash(hash, i);
 			(*field)[i] = player::None;
 			if (beta <= alpha)
 				break;
