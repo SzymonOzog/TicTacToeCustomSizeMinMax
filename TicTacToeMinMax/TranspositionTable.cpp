@@ -33,7 +33,7 @@ void TranspositionTable::placeEntry(unsigned long long hash, std::pair<int, int>
 	Entry& e = entries[hash % entries.size()];
 	if (e.hash != hash)
 	{
-		collisions += e.hash == 0 ? 0 : 1;
+		collisions += e ? 1 : 0;
 		e.hash = hash;
 		e.scoreMove = scoreMove;
 	}

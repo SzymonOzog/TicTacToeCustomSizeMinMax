@@ -9,6 +9,7 @@ struct Entry
 	unsigned long long hash;
 	bool operator == (const Entry& lhs) { return this->hash == lhs.hash; }
 	bool operator != (const Entry & lhs) { return !((*this) == lhs); }
+	operator bool() { return hash; }
 };
 class TranspositionTable
 {

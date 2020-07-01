@@ -182,7 +182,8 @@ TEST(TranspositionTableTest, PlaceEntry)
     EXPECT_TRUE(ttable[hash] == e);
     EXPECT_TRUE(ttable[hash] != ttable.nullEntry);
 }
-void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
+
+void playEveryBoard(AI& ai, std::shared_ptr<Field> f, int& winstate)
 {
     int bestMove = 0;
     auto it = f->begin();
@@ -193,7 +194,7 @@ void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
             break;
         *it = player::Human;
         if (f->hasWon())
-            std::cout << std::endl;
+            winstate++;
         EXPECT_TRUE(!f->hasWon());
 
         bestMove = ai.findBestMove();
@@ -210,7 +211,7 @@ void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
             break;
         }
 
-        playEveryBoard(ai, f);
+        playEveryBoard(ai, f, winstate);
 
         *it = player::None;
         (*f)[bestMove] = player::None;
@@ -221,8 +222,10 @@ void playEveryBoard(AI &ai, std::shared_ptr<Field> f)
 }
 TEST(AcceptanceTest, EveryBoard)
 {
+    int winstate = 0;
     std::shared_ptr<Field> field = std::make_shared<Field>(3);
     AI ai(field);
-    playEveryBoard(ai, field);
+    playEveryBoard(ai, field, winstate);
+    std::cout << winstate << std::endl;
     ai.printCollisions();
 }
