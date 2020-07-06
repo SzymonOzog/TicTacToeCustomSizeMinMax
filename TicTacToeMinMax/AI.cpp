@@ -53,5 +53,6 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 
 void AI::printCollisions()
 {
-	std::cout << tTable->collisions << std::endl;
+	std::cout << "Hash collisions: " << tTable->hashCollisions << std::endl;
+	std::cout << "Entry collisions: " << tTable->entryCollisions << std::endl;
 }

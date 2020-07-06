@@ -17,7 +17,6 @@ public:
 	TranspositionTable() = delete;
 	TranspositionTable(std::shared_ptr<Field> f);
 
-
 	unsigned long long recalculateHash();
 	inline unsigned long long calculateHash(unsigned long long hash, int index) { return hash ^ zobristKeys[getKeyIndex(index)]; }
 	Entry& operator[](unsigned long long h) { 
@@ -26,7 +25,8 @@ public:
 	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove);
 public:
 	Entry nullEntry;
-	unsigned int collisions = 0;
+	unsigned int entryCollisions = 0;
+	unsigned int hashCollisions = 0;
 private:
 	inline int getKeyIndex(int i) { int index = 2 * i; index += (*field)[i] == player::AI ? 1 : 0; return index; }
 private:

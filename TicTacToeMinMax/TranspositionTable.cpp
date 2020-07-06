@@ -3,16 +3,16 @@
 #include <random>
 TranspositionTable::TranspositionTable(std::shared_ptr<Field> f) : field(f)
 {
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-	std::default_random_engine generator(seed);
+	std::mt19937 generator(1729);
 	std::uniform_int_distribution<unsigned long long> distribution;
 	zobristKeys.reserve(2 * field->size());
+	unsigned long long randomKey = 0;
 	for (int i = 0; i < 2 * field->size(); i++)
 	{
-		unsigned long long rand = distribution(generator);
-		while (std::find(zobristKeys.begin(), zobristKeys.end(), rand) != zobristKeys.end())
-			rand = distribution(generator);
-		zobristKeys.emplace_back(rand);
+		do {
+			randomKey = distribution(generator);
+		} while (std::find(zobristKeys.begin(), zobristKeys.end(), randomKey) != zobristKeys.end());
+		zobristKeys.emplace_back(randomKey);
 	}
 	entries.reserve(bigPrimeNumber);
 	for (size_t i = 0; i < bigPrimeNumber; i++)
@@ -33,9 +33,15 @@ void TranspositionTable::placeEntry(unsigned long long hash, std::pair<int, int>
 	Entry& e = entries[hash % entries.size()];
 	if (e.hash != hash)
 	{
-		collisions += e ? 1 : 0;
+		entryCollisions += e ? 1 : 0;
 		e.hash = hash;
 		e.scoreMove = scoreMove;
+	}
+	else if (e.scoreMove != scoreMove)
+	{
+		e = nullEntry;
+		++hashCollisions;
+		++entryCollisions;
 	}
 }
 
