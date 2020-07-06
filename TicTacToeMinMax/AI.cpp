@@ -12,7 +12,7 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 	if ((*tTable)[hash])
 		return (*tTable)[hash].scoreMove;
 	else if (reverseDepth == 0)
-		return { 0, -1 };
+		return { 0, -2 };
 	else if (field->canDrawOrWin() && lastPlay != -1)
 	{
 		if (field->hasWon(lastPlay))
@@ -28,7 +28,8 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 			(*field)[i] = currentPlayer;
 			hash = tTable->calculateHash(hash, i);
 			std::pair<int, int> scoreMove = minMax(reverseDepth - 1, bestScoreMove, getOpponent(currentPlayer), alpha, beta, i);
-			tTable->placeEntry(hash, scoreMove);
+			if(foundScoreInDepth(scoreMove))
+				tTable->placeEntry(hash, scoreMove);
 			if (currentPlayer == player::AI)
 			{
 				alpha = std::max(alpha, scoreMove.first);

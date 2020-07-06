@@ -11,6 +11,7 @@ public:
 	void printCollisions();
 private:
 	inline player getOpponent(player p) { return p == player::AI ? player::Human : player::AI; }
+	inline bool foundScoreInDepth(std::pair<int, int> scoreMove) { return scoreMove.second != -2; }
 	std::shared_ptr<Field> field;
 	std::unique_ptr<TranspositionTable> tTable;
 	unsigned long long hash;
