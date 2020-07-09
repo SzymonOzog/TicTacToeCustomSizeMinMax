@@ -3,10 +3,11 @@
 #include <memory>
 struct Entry
 {
-	Entry() : scoreMove({ 0, -2 }), hash(0) {}
-	Entry(std::pair<int, int> _scoreMove, unsigned long long _hash) : scoreMove(_scoreMove), hash(_hash) {}
+	Entry() : scoreMove({ 0, -2 }), hash(0), depth(0) {}
+	Entry(std::pair<int, int> _scoreMove, unsigned long long _hash, int _depth) : scoreMove(_scoreMove), hash(_hash), depth(_depth) {}
 	std::pair<int, int> scoreMove;
 	unsigned long long hash;
+	int depth;
 	bool operator == (const Entry& lhs) { return this->hash == lhs.hash; }
 	bool operator != (const Entry & lhs) { return !((*this) == lhs); }
 	operator bool() { return hash; }
@@ -22,7 +23,7 @@ public:
 	Entry& operator[](unsigned long long h) { 
 		if (entries[h % entries.size()].hash == h) return entries[h % entries.size()]; 
 		else return nullEntry; }
-	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove);
+	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove, int depth);
 public:
 	Entry nullEntry;
 	unsigned int entryCollisions = 0;

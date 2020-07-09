@@ -164,8 +164,8 @@ TEST(TranspositionTableTest, EntryOperator)
 {
     std::pair <int, int> scoreMove = { 0,0 };
     unsigned long long hash = 1;
-    Entry e1 = Entry(scoreMove, hash);
-    Entry e2 = Entry(scoreMove, hash);
+    Entry e1 = Entry(scoreMove, hash, 0);
+    Entry e2 = Entry(scoreMove, hash, 0);
     EXPECT_TRUE(e1 == e2);
     e2.hash = 2;
     EXPECT_TRUE(e1 != e2);
@@ -177,8 +177,8 @@ TEST(TranspositionTableTest, PlaceEntry)
     TranspositionTable ttable(field);
     (*field)[0] = player::Human;
     int hash = ttable.recalculateHash();
-    ttable.placeEntry(hash, { 1,1 });
-    Entry e = Entry({ 1,1 }, hash);
+    ttable.placeEntry(hash, { 1,1 }, 0);
+    Entry e = Entry({ 1,1 }, hash, 0);
     EXPECT_TRUE(ttable[hash] == e);
     EXPECT_TRUE(ttable[hash] != ttable.nullEntry);
 }
@@ -226,6 +226,6 @@ TEST(AcceptanceTest, EveryBoard)
     std::shared_ptr<Field> field = std::make_shared<Field>(3);
     AI ai(field);
     playEveryBoard(ai, field, winstate);
-    std::cout << winstate << std::endl;
+    std::cout <<"Human wins: " << winstate << std::endl;
     ai.printCollisions();
 }
