@@ -16,7 +16,7 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 	else if (field->canDrawOrWin() && lastPlay != -1)
 	{
 		if (field->hasWon(lastPlay))
-			return { (field->getEmptyCoords() + 1) * static_cast<int>(currentPlayer), -1 };
+			return { evaluateScore(currentPlayer), -1 };
 		else if (field->isDraw())
 			return { 0, -1 };
 	}
