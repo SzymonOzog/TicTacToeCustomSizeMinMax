@@ -34,10 +34,17 @@ void TranspositionTable::placeEntry(unsigned long long hash, std::pair<int, int>
 	if (e.hash != hash)
 	{
 		entryCollisions += e ? 1 : 0;
-		e.hash = hash;
-		e.scoreMove = scoreMove;
-		e.depth = depth;
+		updateEntry(e, hash, scoreMove, depth);
 	}
+	else if (depth > e.depth)
+		updateEntry(e, hash, scoreMove, depth);
+}
+
+void TranspositionTable::updateEntry(Entry& e, unsigned long long hash, std::pair<int, int> scoreMove, int depth)
+{
+	e.hash = hash;
+	e.scoreMove = scoreMove;
+	e.depth = depth;
 }
 
 
