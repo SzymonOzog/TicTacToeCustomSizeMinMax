@@ -15,6 +15,8 @@ public:
 	Field() = delete;
 	Field(int side);
 
+	friend class WinCheckerTemplate;
+
 	bool isCoordWorthChecking(int coord);
 	bool hasWon();	
 	bool hasWon(int i);
@@ -30,6 +32,13 @@ public:
 public:
 	static int fieldSide;
 
+protected:
+	inline player playerAt(int column, int row) { return vecField[coordToField(column, row)]; }
+	inline bool coordInsideField(int x, int y) { return x >= 0 && x < fieldSide&& y >= 0 && y < fieldSide; }
+
+protected:
+	int pointsNeededToWin;
+
 private: 
 	inline bool isCoordTaken(int row, int column) { return coordInsideField(column,row) && vecField[coordToField(column, row)] != player::None; }
 	inline std::pair<int, int> getForwardDiagonalCoord(int i) { int row = getRow(i), column = getColumn(i); int diff = std::min(row, column); return { column - diff, row - diff }; }
@@ -39,7 +48,6 @@ private:
 	inline int getColumn(int i) { return i % fieldSide; }
 	inline int getRow(int i) { return i / fieldSide; }
 	inline int coordToField(int x, int y) { return y * fieldSide + x; }
-	inline bool coordInsideField(int x, int y) { return x >= 0 && x < fieldSide && y >= 0 && y < fieldSide; }
 	bool checkRow(int row);
 	bool checkColumn(int column);
 	bool checkFirstDiagonal(std::pair<int, int> coord);
@@ -49,6 +57,6 @@ private:
 
 private:
 	std::vector<player> vecField;
-	int pointsNeededToWin;
+
 };
 
