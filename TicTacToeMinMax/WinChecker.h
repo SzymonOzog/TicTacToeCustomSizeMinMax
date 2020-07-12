@@ -41,3 +41,13 @@ protected:
 	}
 	virtual void stepFurther() { column++; }
 };
+class ColumnChecker : public WinCheckerTemplate
+{
+public:
+	ColumnChecker(Field* _field) : WinCheckerTemplate(_field) {}
+protected:
+	virtual int maxPossiblePoints() {
+		return field->fieldSide - row + abs(points);
+	}
+	virtual void stepFurther() { row++; }
+};

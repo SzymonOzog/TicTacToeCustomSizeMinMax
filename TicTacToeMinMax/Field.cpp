@@ -6,6 +6,7 @@ Field::Field(int side)
 	pointsNeededToWin = side < 4 ? side : 4;
 	fieldSide = side;
 	rowChecker = new RowChecker(this);
+	columnChecker = new ColumnChecker(this);
 	int size = side * side;
 	vecField.reserve(size);
 	while (size--)
@@ -30,7 +31,8 @@ bool Field::hasWon()
 		rowChecker->updateCoord(0, i);
 		if (rowChecker->checkForWin())
 			return true;
-		if (checkColumn(i))
+		columnChecker->updateCoord(i, 0);
+		if (columnChecker->checkForWin())
 			return true;
 	}
 	for(auto coord : allForwardDiagonals())
