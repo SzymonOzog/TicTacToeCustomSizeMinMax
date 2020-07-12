@@ -20,11 +20,12 @@ public:
 
 	unsigned long long recalculateHash();
 	inline unsigned long long calculateHash(unsigned long long hash, int index) { return hash ^ zobristKeys[getKeyIndex(index)]; }
+	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove, int depth);
+	void updateEntry(Entry& e, unsigned long long hash, std::pair<int, int> scoreMove, int depth);
+
 	Entry& operator[](unsigned long long h) { 
 		if (entries[h % entries.size()].hash == h) return entries[h % entries.size()]; 
 		else return nullEntry; }
-	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove, int depth);
-	void updateEntry(Entry& e, unsigned long long hash, std::pair<int, int> scoreMove, int depth);
 public:
 	Entry nullEntry;
 	unsigned int entryCollisions = 0;

@@ -17,6 +17,10 @@ TicTacToe::TicTacToe(int side) : borderSide(2 * side + 1)
 	ai = std::make_unique<AI>(field);
 }
 
+TicTacToe::~TicTacToe()
+{
+	delete[] screen;
+}
 
 void TicTacToe::createScreen()
 {
@@ -39,10 +43,6 @@ void TicTacToe::createScreen()
 			}
 		}
 	}
-}
-TicTacToe::~TicTacToe()
-{
-	delete[] screen;
 }
 
 void TicTacToe::start()

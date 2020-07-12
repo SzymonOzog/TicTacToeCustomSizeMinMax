@@ -22,10 +22,10 @@ public:
 	void nullify();
 	inline bool canDrawOrWin() { return getEmptyCoords() <= vecField.size() + 1 - 2 * pointsNeededToWin; }
 	inline int getEmptyCoords() { return std::count(vecField.begin(), vecField.end(), player::None); }
-	player& operator [] (int i) { return vecField[i]; }
 	inline auto begin() { return vecField.begin(); }
 	inline auto end() { return vecField.end(); }
 	inline size_t size() { return vecField.size(); }
+	player& operator [] (int i) { return vecField[i]; }
 
 public:
 	static int fieldSide;
