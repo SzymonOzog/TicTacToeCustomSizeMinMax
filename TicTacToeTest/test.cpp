@@ -223,7 +223,7 @@ void playEveryBoard(AI& ai, std::shared_ptr<Field> f, int& winstate)
 TEST(AcceptanceTest, EveryBoard)
 {
     int winstate = 0;
-    std::shared_ptr<Field> field = std::make_shared<Field>(3);
+    std::shared_ptr<Field> field = std::make_shared<Field>(4);
     AI ai(field);
     playEveryBoard(ai, field, winstate);
     std::cout <<"Human wins: " << winstate << std::endl;

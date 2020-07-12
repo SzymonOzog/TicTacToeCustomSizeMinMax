@@ -9,9 +9,10 @@ int AI::findBestMove()
 
 std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMove, player currentPlayer, int alpha, int beta, int lastPlay)
 {
-	if ((*tTable)[hash] && (*tTable)[hash].depth == reverseDepth)
-		return (*tTable)[hash].scoreMove;
-	else if (reverseDepth == 0)
+	Entry e = (*tTable)[hash];
+	if (e && e.depth == reverseDepth)
+			return e.scoreMove;
+	if (reverseDepth == 0)
 		return { 0, -2 };
 	else if (field->canDrawOrWin() && lastPlay != -1)
 	{
@@ -20,7 +21,9 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 		else if (field->isDraw())
 			return { 0, -1 };
 	}
+
 	bestScoreMove.first = currentPlayer == player::AI ? INT_MIN : INT_MAX;
+
 	for (int i = 0; i < field->size(); i++)
 	{
 		if ((*field)[i] == player::None && field->isCoordWorthChecking(i))
@@ -52,6 +55,5 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 
 void AI::printCollisions()
 {
-	std::cout << "Hash collisions: " << tTable->hashCollisions << std::endl;
 	std::cout << "Entry collisions: " << tTable->entryCollisions << std::endl;
 }
