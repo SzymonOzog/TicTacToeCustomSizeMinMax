@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
-
+class RowChecker;
 enum class player : short
 {
 	AI = -1,
@@ -57,6 +57,6 @@ private:
 
 private:
 	std::vector<player> vecField;
-
+	RowChecker* rowChecker = nullptr;
 };
 

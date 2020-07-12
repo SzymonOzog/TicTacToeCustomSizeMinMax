@@ -1,9 +1,11 @@
 #include "Field.h"
+#include "WinChecker.h"
 #include <cmath>
 Field::Field(int side)
 {
 	pointsNeededToWin = side < 4 ? side : 4;
 	fieldSide = side;
+	rowChecker = new RowChecker(this);
 	int size = side * side;
 	vecField.reserve(size);
 	while (size--)
@@ -25,7 +27,8 @@ bool Field::hasWon()
 {
 	for (int i = 0; i < fieldSide; i++)
 	{
-		if (checkRow(i))
+		rowChecker->updateCoord(0, i);
+		if (rowChecker->checkForWin())
 			return true;
 		if (checkColumn(i))
 			return true;

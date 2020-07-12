@@ -4,7 +4,7 @@
 class WinCheckerTemplate
 {
 public:
-	WinCheckerTemplate(std::shared_ptr<Field> _field) : field(_field) {}
+	WinCheckerTemplate(Field* _field) : field(_field) {}
 	bool checkForWin()
 	{
 		while (canWin())
@@ -25,9 +25,19 @@ protected:
 	bool canWin() { return maxPossiblePoints() >= field->pointsNeededToWin && field->coordInsideField(column, row); }
 	virtual int maxPossiblePoints() = 0;
 	virtual void stepFurther() = 0;
-	std::shared_ptr<Field> field;
+	Field* field;
 	int row = 0, column = 0;
 	int points = 0;
 	player currentPlayer = player::None;
 };
 
+class RowChecker : public WinCheckerTemplate
+{
+public:
+	RowChecker(Field* _field) : WinCheckerTemplate(_field) {}
+protected:
+	virtual int maxPossiblePoints() {
+		return field->fieldSide - column + abs(points);
+	}
+	virtual void stepFurther() { column++; }
+};
