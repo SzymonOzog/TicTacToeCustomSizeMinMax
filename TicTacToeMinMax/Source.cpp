@@ -25,8 +25,8 @@ int main()
         std::cin >> str;
         if (regex_match(str, regex_int))
         {
-            if (std::stoi(str) > 6)
-                std::cout << "MinMax algorithm isn`t efficient enough \n to play on a field this big" << std::endl;
+            if (std::stoi(str) > 4)
+                std::cout << "MinMax algorithm isn`t yet efficient enough \nto play on a field this big" << std::endl;
             else if (stoi(str) <= 0)
                 std::cout << "Input must be greater than 0" << std::endl;
             else if (stoi(str) == 1 || stoi(str) == 2)
