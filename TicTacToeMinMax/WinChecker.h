@@ -7,6 +7,7 @@ public:
 	WinCheckerTemplate(Field* _field) : field(_field) {}
 	bool checkForWin()
 	{
+		points = 0;
 		while (canWin())
 		{
 			if(field->playerAt(column, row) == currentPlayer)
@@ -20,7 +21,7 @@ public:
 		}
 		return false;
 	}
-	inline void updateCoord(const int& _column, const int& _row) { column = _column; row = _row; }
+	inline void updateCoord(const int& _column, const int& _row) { column = _column; row = _row; currentPlayer = field->playerAt(column, row);	}
 protected:
 	bool canWin() { return maxPossiblePoints() >= field->pointsNeededToWin && field->coordInsideField(column, row); }
 	virtual int maxPossiblePoints() = 0;
