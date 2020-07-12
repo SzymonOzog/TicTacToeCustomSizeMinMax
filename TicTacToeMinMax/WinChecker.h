@@ -41,6 +41,7 @@ protected:
 	}
 	virtual void stepFurther() { column++; }
 };
+
 class ColumnChecker : public WinCheckerTemplate
 {
 public:
@@ -50,4 +51,15 @@ protected:
 		return field->fieldSide - row + abs(points);
 	}
 	virtual void stepFurther() { row++; }
+};
+
+class ForwardDiagonalChecker : public WinCheckerTemplate
+{
+public:
+	ForwardDiagonalChecker(Field* _field) : WinCheckerTemplate(_field) {}
+protected:
+	virtual int maxPossiblePoints() {
+		return field->fieldSide - row + abs(points);
+	}
+	virtual void stepFurther() { column++; row++; }
 };

@@ -4,6 +4,7 @@
 #include <utility>
 class RowChecker;
 class ColumnChecker;
+class ForwardDiagonalChecker;
 enum class player : short
 {
 	AI = -1,
@@ -60,5 +61,6 @@ private:
 	std::vector<player> vecField;
 	RowChecker* rowChecker = nullptr;
 	ColumnChecker* columnChecker = nullptr;
+	ForwardDiagonalChecker* forwardDiagonalChecker = nullptr;
 };
 
