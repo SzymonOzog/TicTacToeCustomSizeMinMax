@@ -8,6 +8,7 @@ Field::Field(int side)
 	rowChecker = new RowChecker(this);
 	columnChecker = new ColumnChecker(this);
 	forwardDiagonalChecker = new ForwardDiagonalChecker(this);
+	backwardDiagonalChecker = new BackwardDiagonalChecker(this);
 	int size = side * side;
 	vecField.reserve(size);
 	while (size--)
@@ -43,8 +44,11 @@ bool Field::hasWon()
 			return true;
 	}
 	for (auto coord : allBackwardDiagonals())
-		if (checkSecondDiagonal(coord))
+	{
+		backwardDiagonalChecker->updateCoord(coord.first, coord.second);
+		if (backwardDiagonalChecker->checkForWin())
 			return true;
+	}
 	return false;
 }
 

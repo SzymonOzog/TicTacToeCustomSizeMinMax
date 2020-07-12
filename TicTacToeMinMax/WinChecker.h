@@ -63,3 +63,14 @@ protected:
 	}
 	virtual void stepFurther() { column++; row++; }
 };
+
+class BackwardDiagonalChecker : public WinCheckerTemplate
+{
+public:
+	BackwardDiagonalChecker(Field* _field) : WinCheckerTemplate(_field) {}
+protected:
+	virtual int maxPossiblePoints() {
+		return field->fieldSide - row + abs(points);
+	}
+	virtual void stepFurther() { column--; row++; }
+};

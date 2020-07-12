@@ -5,6 +5,7 @@
 class RowChecker;
 class ColumnChecker;
 class ForwardDiagonalChecker;
+class BackwardDiagonalChecker;
 enum class player : short
 {
 	AI = -1,
@@ -62,5 +63,6 @@ private:
 	RowChecker* rowChecker = nullptr;
 	ColumnChecker* columnChecker = nullptr;
 	ForwardDiagonalChecker* forwardDiagonalChecker = nullptr;
+	BackwardDiagonalChecker* backwardDiagonalChecker = nullptr;
 };
 
