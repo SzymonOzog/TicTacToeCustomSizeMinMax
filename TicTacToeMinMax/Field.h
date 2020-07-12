@@ -51,10 +51,6 @@ private:
 	inline int getColumn(int i) { return i % fieldSide; }
 	inline int getRow(int i) { return i / fieldSide; }
 	inline int coordToField(int x, int y) { return y * fieldSide + x; }
-	bool checkRow(int row);
-	bool checkColumn(int column);
-	bool checkFirstDiagonal(std::pair<int, int> coord);
-	bool checkSecondDiagonal(std::pair<int, int> coord);
 	std::vector<std::pair<int, int>> allForwardDiagonals();
 	std::vector<std::pair<int, int>> allBackwardDiagonals();
 
