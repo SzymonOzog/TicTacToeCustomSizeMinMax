@@ -91,6 +91,11 @@ void TicTacToe::playGame()
 						gameOver(player::AI);
 						break;
 					}
+					if(field->getEmptyCoords() == 0)
+					{
+						gameOver(player::None);
+						break;
+					}
 				}
 			}
 		}
