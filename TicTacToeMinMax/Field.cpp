@@ -54,16 +54,19 @@ bool Field::hasWon()
 
 bool Field::hasWon(int i)
 {
-
-	if (checkRow(getRow(i)))
+	rowChecker->updateCoord(0, getRow(i));
+	if (rowChecker->checkForWin())
 		return true;
-	if (checkColumn(getColumn(i)))
+	columnChecker->updateCoord(getColumn(i), 0);
+	if (columnChecker->checkForWin())
 		return true;
 	std::pair<int, int> coord = getForwardDiagonalCoord(i);
-	if (checkFirstDiagonal(coord))
+	forwardDiagonalChecker->updateCoord(coord.first, coord.second);
+	if (forwardDiagonalChecker->checkForWin())
 		return true;
 	coord = getBackwardDiagonalCoord(i);
-	if (checkSecondDiagonal(coord))
+	backwardDiagonalChecker->updateCoord(coord.first, coord.second);
+	if (backwardDiagonalChecker->checkForWin())
 		return true;
 	return false;
 }
