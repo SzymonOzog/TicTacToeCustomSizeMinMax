@@ -49,11 +49,23 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 				break;
 		}
 	}
-	tTable->placeEntry(hash, bestScoreMove, reverseDepth);
+	tTable->placeEntry(hash, bestScoreMove, reverseDepth, getEntryType(bestScoreMove, alpha, beta));
 	return bestScoreMove;
 }
 
 void AI::printCollisions()
 {
 	std::cout << "Entry collisions: " << tTable->entryCollisions << std::endl;
+}
+
+EntryType AI::getEntryType(std::pair<int, int> scoreMove, int alpha, int beta)
+{
+	int score = scoreMove.first;
+	if (score == alpha)
+		return EntryType::lowerBound;
+	else if (score == beta)
+		return EntryType::upperBound;
+	else if (score < alpha && score > beta)
+		return EntryType::trueValue;
+	return EntryType::nullEntry;
 }
