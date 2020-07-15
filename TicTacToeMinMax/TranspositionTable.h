@@ -1,13 +1,21 @@
 #pragma once
 #include "Field.h"
 #include <memory>
+enum class EntryType : short
+{
+	nullEntry,
+	lowerBound,
+	trueValue,
+	upperBound
+};
 struct Entry
 {
 	Entry() = default;
-	Entry(std::pair<int, int> _scoreMove, unsigned long long _hash, int _depth) : scoreMove(_scoreMove), hash(_hash), depth(_depth) {}
+	Entry(std::pair<int, int> _scoreMove, unsigned long long _hash, int _depth, EntryType  _type) : scoreMove(_scoreMove), hash(_hash), depth(_depth), type (_type) {}
 	std::pair<int, int> scoreMove = { 0, -2 };
 	unsigned long long hash = 0;
 	int depth = 0;
+	EntryType type = EntryType::nullEntry;
 	bool operator == (const Entry& lhs) { return this->hash == lhs.hash; }
 	bool operator != (const Entry & lhs) { return !((*this) == lhs); }
 	operator bool() { return hash; }
@@ -20,8 +28,8 @@ public:
 
 	unsigned long long recalculateHash();
 	inline unsigned long long calculateHash(unsigned long long hash, int index) { return hash ^ zobristKeys[getKeyIndex(index)]; }
-	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove, int depth);
-	void updateEntry(Entry& e, unsigned long long hash, std::pair<int, int> scoreMove, int depth);
+	void placeEntry(unsigned long long hash, std::pair<int, int> scoreMove, int depth, EntryType  type);
+	void updateEntry(Entry& e, unsigned long long hash, std::pair<int, int> scoreMove, int depth, EntryType  type);
 
 	Entry& operator[](unsigned long long h) { 
 		if (entries[h % entries.size()].hash == h) return entries[h % entries.size()]; 

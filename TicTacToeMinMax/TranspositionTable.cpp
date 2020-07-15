@@ -28,23 +28,24 @@ unsigned long long TranspositionTable::recalculateHash()
 	return hash;
 }
 
-void TranspositionTable::placeEntry(unsigned long long hash, std::pair<int, int> scoreMove, int depth)
+void TranspositionTable::placeEntry(unsigned long long hash, std::pair<int, int> scoreMove, int depth, EntryType  type)
 {
 	Entry& e = entries[hash % entries.size()];
 	if (e.hash != hash)
 	{
 		entryCollisions += e ? 1 : 0;
-		updateEntry(e, hash, scoreMove, depth);
+		updateEntry(e, hash, scoreMove, depth, type);
 	}
-	else if (depth > e.depth)
-		updateEntry(e, hash, scoreMove, depth);
+	else if (depth >= e.depth)
+		updateEntry(e, hash, scoreMove, depth, type);
 }
 
-void TranspositionTable::updateEntry(Entry& e, unsigned long long hash, std::pair<int, int> scoreMove, int depth)
+void TranspositionTable::updateEntry(Entry& e, unsigned long long hash, std::pair<int, int> scoreMove, int depth, EntryType  type)
 {
 	e.hash = hash;
 	e.scoreMove = scoreMove;
 	e.depth = depth;
+	e.type = type;
 }
 
 
