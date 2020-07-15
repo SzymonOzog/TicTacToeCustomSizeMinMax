@@ -11,7 +11,23 @@ std::pair<int, int> AI::minMax(int reverseDepth, std::pair<int, int> bestScoreMo
 {
 	Entry e = (*tTable)[hash];
 	if (e && e.depth == reverseDepth)
+	{
+		switch (e.type)
+		{
+		case EntryType::trueValue:
 			return e.scoreMove;
+		case EntryType::lowerBound:
+			if (e.scoreMove.first >= beta)
+				return e.scoreMove;
+			alpha = std::max(alpha, e.scoreMove.first);
+			break;
+		case EntryType::upperBound:
+			if (e.scoreMove.first <= alpha)
+				return e.scoreMove;
+			beta = std::min(beta, e.scoreMove.first);
+			break;
+		}
+	}
 	if (reverseDepth == 0)
 		return { 0, -2 };
 	else if (field->canDrawOrWin() && lastPlay != -1)
