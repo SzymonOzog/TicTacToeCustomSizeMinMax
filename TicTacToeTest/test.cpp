@@ -164,8 +164,8 @@ TEST(TranspositionTableTest, EntryOperator)
 {
     std::pair <int, int> scoreMove = { 0,0 };
     unsigned long long hash = 1;
-    Entry e1 = Entry(scoreMove, hash, 0);
-    Entry e2 = Entry(scoreMove, hash, 0);
+    Entry e1 = Entry(scoreMove, hash, 0, EntryType::trueValue);
+    Entry e2 = Entry(scoreMove, hash, 0, EntryType::trueValue);
     EXPECT_TRUE(e1 == e2);
     e2.hash = 2;
     EXPECT_TRUE(e1 != e2);
@@ -177,8 +177,8 @@ TEST(TranspositionTableTest, PlaceEntry)
     TranspositionTable ttable(field);
     (*field)[0] = player::Human;
     int hash = ttable.recalculateHash();
-    ttable.placeEntry(hash, { 1,1 }, 0);
-    Entry e = Entry({ 1,1 }, hash, 0);
+    ttable.placeEntry(hash, { 1,1 }, 0, EntryType::trueValue);
+    Entry e = Entry({ 1,1 }, hash, 0, EntryType::trueValue);
     EXPECT_TRUE(ttable[hash] == e);
     EXPECT_TRUE(ttable[hash] != ttable.nullEntry);
 }
