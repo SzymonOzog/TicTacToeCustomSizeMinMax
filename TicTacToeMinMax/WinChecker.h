@@ -5,9 +5,10 @@ class WinCheckerTemplate
 {
 public:
 	WinCheckerTemplate(Field* _field) : field(_field) {}
-	bool checkForWin()
+	bool checkForWin(const int& coord)
 	{
 		points = 0;
+		updateCoord(coord);
 		while (canWin())
 		{
 			if(field->playerAt(column, row) == currentPlayer)
@@ -21,9 +22,9 @@ public:
 		}
 		return false;
 	}
-	inline void updateCoord(const int& _column, const int& _row) { column = _column; row = _row; currentPlayer = field->playerAt(column, row);	}
 protected:
 	bool canWin() { return maxPossiblePoints() >= field->pointsNeededToWin && field->coordInsideField(column, row); }
+	virtual void updateCoord(const int& coord) = 0;
 	virtual int maxPossiblePoints() = 0;
 	virtual void stepFurther() = 0;
 	Field* field;
@@ -37,6 +38,7 @@ class RowChecker : public WinCheckerTemplate
 public:
 	RowChecker(Field* _field) : WinCheckerTemplate(_field) {}
 protected:
+	virtual void updateCoord(const int& coord) { row = coord / field->fieldSide; column = 0; }
 	virtual int maxPossiblePoints() {
 		return field->fieldSide - column + abs(points);
 	}
@@ -48,6 +50,7 @@ class ColumnChecker : public WinCheckerTemplate
 public:
 	ColumnChecker(Field* _field) : WinCheckerTemplate(_field) {}
 protected:
+	virtual void updateCoord(const int& coord) { row = 0; column = coord % field->fieldSide; }
 	virtual int maxPossiblePoints() {
 		return field->fieldSide - row + abs(points);
 	}
@@ -59,6 +62,9 @@ class ForwardDiagonalChecker : public WinCheckerTemplate
 public:
 	ForwardDiagonalChecker(Field* _field) : WinCheckerTemplate(_field) {}
 protected:
+	virtual void updateCoord(const int& coord) { row = getForwardDiagonalCoord(coord).second; column = getForwardDiagonalCoord(coord).first; }
+	inline std::pair<int, int> getForwardDiagonalCoord(int i) { int row = i / field->fieldSide; column = i % field->fieldSide; int diff = std::min(row, column); return { column - diff, row - diff }; }
+
 	virtual int maxPossiblePoints() {
 		return field->fieldSide - row + abs(points);
 	}
@@ -70,6 +76,8 @@ class BackwardDiagonalChecker : public WinCheckerTemplate
 public:
 	BackwardDiagonalChecker(Field* _field) : WinCheckerTemplate(_field) {}
 protected:
+	virtual void updateCoord(const int& coord) { row = getBackwardDiagonalCoord(coord).second; column = getBackwardDiagonalCoord(coord).first;}
+	inline std::pair<int, int> getBackwardDiagonalCoord(int i) { int row = i / field->fieldSide; column = i % field->fieldSide; int diff = std::min(row, (field->fieldSide - 1 - column)); return { column + diff, row - diff }; }
 	virtual int maxPossiblePoints() {
 		return field->fieldSide - row + abs(points);
 	}

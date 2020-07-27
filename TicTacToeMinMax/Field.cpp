@@ -30,23 +30,19 @@ bool Field::hasWon()
 {
 	for (int i = 0; i < fieldSide; i++)
 	{
-		rowChecker->updateCoord(0, i);
-		if (rowChecker->checkForWin())
+		if (rowChecker->checkForWin(i * fieldSide))
 			return true;
-		columnChecker->updateCoord(i, 0);
-		if (columnChecker->checkForWin())
+		if (columnChecker->checkForWin(i))
 			return true;
 	}
 	for (auto coord : allForwardDiagonals())
 	{
-		forwardDiagonalChecker->updateCoord(coord.first, coord.second);
-		if (forwardDiagonalChecker->checkForWin())
+		if (forwardDiagonalChecker->checkForWin(coordToField(coord.first, coord.second)))
 			return true;
 	}
 	for (auto coord : allBackwardDiagonals())
 	{
-		backwardDiagonalChecker->updateCoord(coord.first, coord.second);
-		if (backwardDiagonalChecker->checkForWin())
+		if (backwardDiagonalChecker->checkForWin(coordToField(coord.first, coord.second)))
 			return true;
 	}
 	return false;
@@ -54,19 +50,13 @@ bool Field::hasWon()
 
 bool Field::hasWon(int i)
 {
-	rowChecker->updateCoord(0, getRow(i));
-	if (rowChecker->checkForWin())
+	if (rowChecker->checkForWin(i))
 		return true;
-	columnChecker->updateCoord(getColumn(i), 0);
-	if (columnChecker->checkForWin())
+	if (columnChecker->checkForWin(i))
 		return true;
-	std::pair<int, int> coord = getForwardDiagonalCoord(i);
-	forwardDiagonalChecker->updateCoord(coord.first, coord.second);
-	if (forwardDiagonalChecker->checkForWin())
+	if (forwardDiagonalChecker->checkForWin(i))
 		return true;
-	coord = getBackwardDiagonalCoord(i);
-	backwardDiagonalChecker->updateCoord(coord.first, coord.second);
-	if (backwardDiagonalChecker->checkForWin())
+	if (backwardDiagonalChecker->checkForWin(i))
 		return true;
 	return false;
 }
