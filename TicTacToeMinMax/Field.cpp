@@ -5,10 +5,10 @@ Field::Field(int side)
 {
 	pointsNeededToWin = side < 4 ? side : 4;
 	fieldSide = side;
-	rowChecker = new RowChecker(this);
-	columnChecker = new ColumnChecker(this);
-	forwardDiagonalChecker = new ForwardDiagonalChecker(this);
-	backwardDiagonalChecker = new BackwardDiagonalChecker(this);
+	winCheckers.push_back(new RowChecker(this));
+	winCheckers.push_back(new ColumnChecker(this));
+	winCheckers.push_back(new ForwardDiagonalChecker(this));
+	winCheckers.push_back(new BackwardDiagonalChecker(this));
 	int size = side * side;
 	vecField.reserve(size);
 	while (size--)
@@ -28,27 +28,17 @@ bool Field::isCoordWorthChecking(int coord)
 
 bool Field::hasWon()
 {
-	if (rowChecker->checkAllLines())
-		return true;
-	if (columnChecker->checkAllLines())
-		return true;
-	if (forwardDiagonalChecker->checkAllLines())
-		return true;
-	if (backwardDiagonalChecker->checkAllLines())
-		return true;
+	for (auto winChecker : winCheckers)
+		if (winChecker->checkAllLines())
+			return true;
 	return false;
 }
 
 bool Field::hasWon(int i)
 {
-	if (rowChecker->checkForWin(i))
-		return true;
-	if (columnChecker->checkForWin(i))
-		return true;
-	if (forwardDiagonalChecker->checkForWin(i))
-		return true;
-	if (backwardDiagonalChecker->checkForWin(i))
-		return true;
+	for (auto winChecker : winCheckers)
+		if (winChecker->checkForWin(i))
+			return true;
 	return false;
 }
 

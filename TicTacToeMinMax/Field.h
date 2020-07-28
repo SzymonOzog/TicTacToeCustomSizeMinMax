@@ -2,10 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
-class RowChecker;
-class ColumnChecker;
-class ForwardDiagonalChecker;
-class BackwardDiagonalChecker;
+class WinCheckerTemplate;
 enum class player : short
 {
 	AI = -1,
@@ -48,10 +45,7 @@ private:
 
 private:
 	std::vector<player> vecField;
+	std::vector<WinCheckerTemplate*> winCheckers;
 	int pointsNeededToWin;
-	RowChecker* rowChecker = nullptr;
-	ColumnChecker* columnChecker = nullptr;
-	ForwardDiagonalChecker* forwardDiagonalChecker = nullptr;
-	BackwardDiagonalChecker* backwardDiagonalChecker = nullptr;
 };
 
