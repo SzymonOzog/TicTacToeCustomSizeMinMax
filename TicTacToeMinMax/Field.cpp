@@ -28,23 +28,14 @@ bool Field::isCoordWorthChecking(int coord)
 
 bool Field::hasWon()
 {
-	for (int i = 0; i < fieldSide; i++)
-	{
-		if (rowChecker->checkForWin(i * fieldSide))
-			return true;
-		if (columnChecker->checkForWin(i))
-			return true;
-	}
-	for (auto coord : allForwardDiagonals())
-	{
-		if (forwardDiagonalChecker->checkForWin(coordToField(coord.first, coord.second)))
-			return true;
-	}
-	for (auto coord : allBackwardDiagonals())
-	{
-		if (backwardDiagonalChecker->checkForWin(coordToField(coord.first, coord.second)))
-			return true;
-	}
+	if (rowChecker->checkAllLines())
+		return true;
+	if (columnChecker->checkAllLines())
+		return true;
+	if (forwardDiagonalChecker->checkAllLines())
+		return true;
+	if (backwardDiagonalChecker->checkAllLines())
+		return true;
 	return false;
 }
 
@@ -65,24 +56,4 @@ void Field::nullify()
 {
 	for (auto& p : vecField)
 		p = player::None;
-}
-
-std::vector<std::pair<int, int>> Field::allForwardDiagonals()
-{
-	std::vector<std::pair<int, int>> forwardDiagonals;
-	int row = 0, column = 0;
-	while (fieldSide - row >= pointsNeededToWin)
-		forwardDiagonals.push_back({ column, row++ });
-	row = 0;
-	while (fieldSide - column >= pointsNeededToWin)
-		forwardDiagonals.push_back({ column++, row });
-	return forwardDiagonals;
-}
-
-std::vector<std::pair<int, int>> Field::allBackwardDiagonals()
-{
-	std::vector<std::pair<int, int>> backwardDiagonals = allForwardDiagonals();
-	for (auto& coord : backwardDiagonals)
-		coord.first = fieldSide - 1 - coord.first;
-	return backwardDiagonals;
 }

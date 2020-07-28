@@ -27,6 +27,10 @@ public:
 	void nullify();
 	inline bool canDrawOrWin() { return getEmptyCoords() <= vecField.size() + 1 - 2 * pointsNeededToWin; }
 	inline int getEmptyCoords() { return std::count(vecField.begin(), vecField.end(), player::None); }
+	inline int getColumn(int i) { return i % fieldSide; }
+	inline int getRow(int i) { return i / fieldSide; }
+	inline int getPointsNeededToWin() { return pointsNeededToWin; }
+	inline int coordToField(int x, int y) { return y * fieldSide + x; }
 	inline auto begin() { return vecField.begin(); }
 	inline auto end() { return vecField.end(); }
 	inline size_t size() { return vecField.size(); }
@@ -39,23 +43,12 @@ protected:
 	inline player playerAt(int column, int row) { return vecField[coordToField(column, row)]; }
 	inline bool coordInsideField(int x, int y) { return x >= 0 && x < fieldSide&& y >= 0 && y < fieldSide; }
 
-protected:
-	int pointsNeededToWin;
-
 private: 
 	inline bool isCoordTaken(int row, int column) { return coordInsideField(column,row) && vecField[coordToField(column, row)] != player::None; }
-	inline std::pair<int, int> getForwardDiagonalCoord(int i) { int row = getRow(i), column = getColumn(i); int diff = std::min(row, column); return { column - diff, row - diff }; }
-	inline std::pair<int, int> getBackwardDiagonalCoord(int i) { int row = getRow(i), column = getColumn(i); int diff = std::min(row, (fieldSide - 1 - column)); return { column + diff, row - diff }; }
-	inline bool isOnFirstDiagonal(int i) { return getRow(i) == getColumn(i); }
-	inline bool isOnSecondDiagonal(int i) { return fieldSide - 1 - getRow(i) == getColumn(i); }
-	inline int getColumn(int i) { return i % fieldSide; }
-	inline int getRow(int i) { return i / fieldSide; }
-	inline int coordToField(int x, int y) { return y * fieldSide + x; }
-	std::vector<std::pair<int, int>> allForwardDiagonals();
-	std::vector<std::pair<int, int>> allBackwardDiagonals();
 
 private:
 	std::vector<player> vecField;
+	int pointsNeededToWin;
 	RowChecker* rowChecker = nullptr;
 	ColumnChecker* columnChecker = nullptr;
 	ForwardDiagonalChecker* forwardDiagonalChecker = nullptr;
